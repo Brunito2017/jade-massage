@@ -34,7 +34,7 @@
      se centre arriba y no quede debajo de la curva).
      En pantallas bajas manda el suelo de 9rem: con 40vh la franja quedaba tan
      delgada que la curva pasaba por encima de los íconos. */
-  --onda-alto: clamp(9rem, 42vh, 24rem);
+  --onda-alto: clamp(9rem, 42vh, 20rem);
 
   /* Movimiento — una sola curva y un solo tiempo para todo el sitio.
      La curva frena muy al final y no rebota: es lo que hace que las entradas

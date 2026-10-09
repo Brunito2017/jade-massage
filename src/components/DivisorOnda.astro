@@ -45,9 +45,17 @@ const { color = 'var(--color-crema-50)', voltear = false } = Astro.props;
 
 <div class:list={['onda', { 'onda--volteada': voltear }]} aria-hidden="true">
   <svg viewBox="0 0 1440 200" preserveAspectRatio="none" focusable="false">
-    <path
-      d="M0,86 C200,86 360,52 620,52 C900,52 1120,74 1440,84 L1440,200 L0,200 Z"
-      fill={color}></path>
+
+<path
+  d="M0,86
+     C120,85 220,82 360,82
+     C500,82 560,85 720,84
+     C880,83 980,80 1120,82
+     C1260,83 1360,85 1440,85
+     L1440,200
+     L0,200 Z"
+  fill={color}
+></path>
   </svg>
 </div>
 
