@@ -31,8 +31,10 @@
   /* Alto de la onda que cierra el hero, en proporción a la pantalla: la
      franja crema ocupa ~30% de la primera pantalla. Lo comparten DivisorOnda
      (que dibuja el relleno) y Hero (que reserva ese espacio para que el texto
-     se centre arriba y no quede debajo de la curva). */
-  --onda-alto: clamp(8rem, 40vh, 24rem);
+     se centre arriba y no quede debajo de la curva).
+     En pantallas bajas manda el suelo de 9rem: con 40vh la franja quedaba tan
+     delgada que la curva pasaba por encima de los íconos. */
+  --onda-alto: clamp(9rem, 42vh, 24rem);
 
   /* Movimiento — una sola curva y un solo tiempo para todo el sitio.
      La curva frena muy al final y no rebota: es lo que hace que las entradas
@@ -114,6 +116,19 @@
 
 #site-header[data-transparente='true']:not([data-scrolled]) .site-nav-link a:hover {
   color: var(--color-crema-200);
+}
+
+/* ============================================================
+   PANTALLAS BAJAS — el hero tiene que entrar en una pantalla
+   ============================================================ */
+
+/* Un celular acostado no tiene alto para una onda de 42vh: se achica para que
+   el texto siga teniendo dónde ir. Se cambia el token y no cada uso, así la
+   curva y el espacio que reserva el hero se mueven juntos. */
+@media (max-height: 520px) {
+  :root {
+    --onda-alto: 30vh;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

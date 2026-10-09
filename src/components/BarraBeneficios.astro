@@ -135,9 +135,10 @@ const ICONOS: Record<Icono, string> = {
     display: grid;
     place-items: center;
     /* El alto sale del mismo presupuesto que la franja: la parte sólida de la
-       crema mide ~23vh (ver DivisorOnda), así que en ventanas bajas el ícono se
-       achica solo antes que cruzar la curva. 4rem es lo que ocupan el resto de
-       la franja — separación, texto y aire contra el borde inferior. */
+       crema mide ~24vh (ver DivisorOnda), así que en ventanas bajas el ícono se
+       achica solo antes que cruzar la curva. Lo que ocupan la separación, el
+       texto y el aire contra el borde inferior son ~5rem — el aire lo pone el
+       hero (ver .hero__cierre-contenido). */
     width: clamp(2.5rem, calc(14vh - 4rem), 3.5rem);
     aspect-ratio: 1;
     border-radius: 9999px;

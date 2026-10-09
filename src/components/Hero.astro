@@ -147,19 +147,7 @@ const config = VARIANTES_HERO[variante];
     padding-bottom: var(--onda-alto);
   }
 
-  /* En pantallas muy bajas ya no hay franja que quepa: el ícono se achica solo
-     (ver BarraBeneficios), pero por debajo de esto quedaría pegado a la curva. */
-  @media (max-height: 520px) {
-    .hero--con-onda {
-      padding-bottom: 6rem;
-    }
-
-    .hero__cierre-contenido {
-      display: none;
-    }
-  }
-
-  /* ---------- completo: imagen a sangre, texto centrado ---------- */
+  /* ---------- completo: imagen a sangre, texto centrado  hola felipe ---------- */
 
   .hero--completo {
     display: grid;
@@ -273,7 +261,11 @@ const config = VARIANTES_HERO[variante];
   .hero__cierre-contenido {
     position: relative;
     z-index: 4;
-    padding-bottom: 1.5rem;
+    /* Aire bajo la franja. La crema sólida mide ~57% del alto de la onda, así
+       que la mitad de lo que sobra es esto: la franja queda al medio de la
+       parte sólida y no pegada al borde de la pantalla. Antes eran 1.5rem
+       fijos, que en pantallas bajas dejaba los íconos casi tocando el borde. */
+    padding-bottom: clamp(1.5rem, 5.5vh, 2.75rem);
   }
 
   /* ============================================================
@@ -329,6 +321,32 @@ const config = VARIANTES_HERO[variante];
       padding: 3rem 3.5rem;
       background-color: color-mix(in oklch, var(--color-tierra-950) 90%, transparent);
       backdrop-filter: blur(6px);
+    }
+  }
+
+  /* ============================================================
+     PANTALLAS BAJAS — que el hero entero entre en una pantalla
+     ============================================================ */
+
+  /* Un celular chico no da para el aire de siempre: con 6.5rem arriba y 5.5rem
+     abajo, texto + onda + franja medían más que la pantalla. El hero crecía
+     —`min-height`, no `height`— y la franja de íconos caía bajo el pliegue.
+     Se recorta el aire vertical, no el contenido, y la franja vuelve a verse
+     al abrir la página. Los 5.5rem de arriba son el mínimo que despeja el
+     header, que va transparente encima de la foto.
+     Va después del bloque de 768px para recortar también en ventanas bajas de
+     escritorio; `padding-block` deja intacto el margen lateral de cada tamaño. */
+  @media (max-height: 740px) {
+    .hero--completo .hero__inner {
+      padding-block: 5.5rem 2rem;
+    }
+  }
+
+  /* Muy bajo (celular acostado): la onda se achica en global.css y la franja
+     desaparece, en vez de quedar aplastada contra la curva. */
+  @media (max-height: 520px) {
+    .hero__cierre-contenido {
+      display: none;
     }
   }
 </style>

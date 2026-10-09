@@ -263,4 +263,17 @@ const {
       animation: none;
     }
   }
+
+  /* Pantallas bajas: el hero completo (texto + onda + franja) no entra en una
+     pantalla, así que además de recortar el aire del hero se aprieta lo que
+     sobra entre bloques. Va después del corte de 768px a propósito. */
+  @media (max-height: 740px) {
+    .hero-texto__sub {
+      margin-top: 1rem;
+    }
+
+    .hero-texto__acciones {
+      margin-top: 1.4rem;
+    }
+  }
 </style>
