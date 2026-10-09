@@ -27,6 +27,18 @@
   /* Espaciado de secciones — ritmo amplio, aire */
   --spacing-seccion: 6rem;
   --spacing-seccion-movil: 4rem;
+
+  /* Alto de la onda que cierra el hero, en proporción a la pantalla: la
+     franja crema ocupa ~30% de la primera pantalla. Lo comparten DivisorOnda
+     (que dibuja el relleno) y Hero (que reserva ese espacio para que el texto
+     se centre arriba y no quede debajo de la curva). */
+  --onda-alto: clamp(8rem, 40vh, 24rem);
+
+  /* Movimiento — una sola curva y un solo tiempo para todo el sitio.
+     La curva frena muy al final y no rebota: es lo que hace que las entradas
+     se lean como calma y no como rebote. Cambiar acá mueve todo junto. */
+  --ease-suave: cubic-bezier(0.22, 1, 0.36, 1);
+  --duracion-entrada: 1.1s;
 }
 
 @layer base {
@@ -113,6 +125,9 @@
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    /* Sin esto, lo que entra escalonado se queda invisible todo su retraso y
+       después aparece de golpe: peor que no animar. */
+    animation-delay: 0s !important;
     transition-duration: 0.01ms !important;
   }
 }

@@ -1,5 +1,6 @@
 ---
 import HeroTexto from './HeroTexto.astro';
+import DivisorOnda from './DivisorOnda.astro';
 import { VARIANTES_HERO, type VarianteHero } from '../data/hero';
 
 /**
@@ -21,11 +22,11 @@ interface Props {
   subtitulo: string;
   ctaTexto: string;
   ctaHref: string;
-  /** Ancla del indicador de scroll. Sin esto no se muestra. */
-  anclaScroll?: string;
   /** Fuerza el tono del texto en vez del que trae la variante. */
   tono?: 'claro' | 'oscuro';
   alineacion?: 'centro' | 'izquierda';
+  /** Color con que la onda cierra el hero. Por defecto, el fondo de página. */
+  colorOnda?: string;
 }
 
 const {
@@ -37,15 +38,15 @@ const {
   subtitulo,
   ctaTexto,
   ctaHref,
-  anclaScroll,
   tono,
   alineacion,
+  colorOnda,
 } = Astro.props;
 
 const config = VARIANTES_HERO[variante];
 ---
 
-<section class:list={['hero', `hero--${variante}`]}>
+<section class:list={['hero', `hero--${variante}`, { 'hero--con-onda': config.divisorOnda }]}>
   <div class="hero__media" aria-hidden="true">
     <img src={imagen} alt={imagenAlt} width="1920" height="1080" fetchpriority="high" decoding="async" />
     <div class="hero__velo"></div>
@@ -66,11 +67,15 @@ const config = VARIANTES_HERO[variante];
   </div>
 
   {
-    anclaScroll && (
-      <a class="hero__scroll" href={anclaScroll} aria-label="Ver servicios">
-        <span class="hero__scroll-linea" aria-hidden="true" />
-        <span class="hero__scroll-label">Servicios</span>
-      </a>
+    config.divisorOnda && (
+      <div class="hero__cierre">
+        <DivisorOnda color={colorOnda} />
+        {Astro.slots.has('cierre') && (
+          <div class="hero__cierre-contenido">
+            <slot name="cierre" />
+          </div>
+        )}
+      </div>
     )
   }
 </section>
@@ -100,6 +105,17 @@ const config = VARIANTES_HERO[variante];
     width: 100%;
     height: 100%;
     object-fit: cover;
+    /* La foto se asienta: entra un poco ampliada y se acomoda. Es lo más lento
+       del hero a propósito — da la sensación de que la página respira antes de
+       ponerse a hablar. */
+    animation: hero-foto 2.4s var(--ease-suave) backwards;
+  }
+
+  @keyframes hero-foto {
+    from {
+      opacity: 0;
+      transform: scale(1.05);
+    }
   }
 
   /* Velo para que el texto se lea sobre cualquier foto */
@@ -122,6 +138,25 @@ const config = VARIANTES_HERO[variante];
 
   .hero__inner {
     width: 100%;
+  }
+
+  /* Reserva el alto de la onda (--onda-alto, global.css). El hero es un grid
+     con place-items: center, así que este padding encoge el área útil y el
+     texto se centra por encima de la curva en vez de quedar debajo. */
+  .hero--con-onda {
+    padding-bottom: var(--onda-alto);
+  }
+
+  /* En pantallas muy bajas ya no hay franja que quepa: el ícono se achica solo
+     (ver BarraBeneficios), pero por debajo de esto quedaría pegado a la curva. */
+  @media (max-height: 520px) {
+    .hero--con-onda {
+      padding-bottom: 6rem;
+    }
+
+    .hero__cierre-contenido {
+      display: none;
+    }
   }
 
   /* ---------- completo: imagen a sangre, texto centrado ---------- */
@@ -218,55 +253,27 @@ const config = VARIANTES_HERO[variante];
     margin: 0 auto;
   }
 
-  /* ---------- indicador de scroll ---------- */
+  /* ---------- cierre inferior: onda + franja que la onda abre ---------- */
 
-  .hero__scroll {
+  /* Caja que ocupa la franja reservada por .hero--con-onda. La onda se ancla
+     sola contra su borde inferior y mide lo mismo, así que la llena entera.
+     El contenido del slot se apoya abajo, sobre la parte sólida de la crema. */
+  .hero__cierre {
     position: absolute;
-    bottom: 1.5rem;
-    left: 50%;
-    transform: translateX(-50%);
+    inset: auto 0 0 0;
     z-index: 3;
+    height: var(--onda-alto);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 0.65rem;
-    color: color-mix(in oklch, var(--color-crema-100) 70%, transparent);
+    justify-content: flex-end;
   }
 
-  .hero__scroll-linea {
-    display: block;
-    width: 1px;
-    height: 2.75rem;
-    background-color: color-mix(in oklch, var(--color-crema-100) 30%, transparent);
+  /* z-index por encima del 3 de la onda (DivisorOnda): si no, el relleno
+     crema del SVG se pinta encima del contenido y lo tapa. */
+  .hero__cierre-contenido {
     position: relative;
-    overflow: hidden;
-  }
-
-  .hero__scroll-linea::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 40%;
-    background-color: var(--color-crema-100);
-    animation: hero-scroll 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  }
-
-  @keyframes hero-scroll {
-    0% {
-      transform: translateY(-100%);
-    }
-    60%,
-    100% {
-      transform: translateY(250%);
-    }
-  }
-
-  .hero__scroll-label {
-    font-size: 0.68rem;
-    text-transform: uppercase;
-    letter-spacing: 0.22em;
+    z-index: 4;
+    padding-bottom: 1.5rem;
   }
 
   /* ============================================================
@@ -289,14 +296,6 @@ const config = VARIANTES_HERO[variante];
 
     .hero--marco .hero__inner {
       padding: 7rem 2rem 6rem;
-    }
-
-    .hero__scroll {
-      bottom: 2.25rem;
-    }
-
-    .hero__scroll-linea {
-      height: 3.5rem;
     }
   }
 
@@ -330,20 +329,6 @@ const config = VARIANTES_HERO[variante];
       padding: 3rem 3.5rem;
       background-color: color-mix(in oklch, var(--color-tierra-950) 90%, transparent);
       backdrop-filter: blur(6px);
-    }
-  }
-
-  /* En pantallas bajas el indicador choca con los CTAs */
-  @media (max-height: 700px) {
-    .hero__scroll {
-      display: none;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .hero__scroll-linea::after {
-      animation: none;
-      opacity: 0;
     }
   }
 </style>

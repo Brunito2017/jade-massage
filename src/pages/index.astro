@@ -3,6 +3,8 @@ import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import SEO from '../components/SEO.astro';
 import Hero from '../components/Hero.astro';
+import BarraBeneficios from '../components/BarraBeneficios.astro';
+import type { Beneficio } from '../components/BarraBeneficios.astro';
 import { SITE, whatsappLink } from '../data/site';
 import { negocioLocal } from '../data/schema';
 import { VARIANTES_HERO, type VarianteHero } from '../data/hero';
@@ -26,6 +28,13 @@ const servicios = (await getCollection('servicios')).sort(
 const activos = servicios.filter((s) => s.data.activo);
 const inactivos = servicios.filter((s) => !s.data.activo);
 const destacado = servicios.find((s) => s.data.prioridad === 1)!;
+
+/** Franja que va dentro de la onda, al pie del hero. */
+const beneficios: Beneficio[] = [
+  { icono: 'hoja', texto: 'Masoterapia clínica' },
+  { icono: 'loto', texto: 'Estética integral' },
+  { icono: 'corazon', texto: 'Tu bienestar, primero' },
+];
 
 const pasos = [
   {
@@ -101,8 +110,9 @@ const faq = [
     subtitulo="Un espacio dedicado al cuidado del cuerpo y la calma. Masaje descontracturante, drenaje linfático y tratamientos faciales, con atención personalizada."
     ctaTexto="Agendar por WhatsApp"
     ctaHref={whatsappLink('Hola, me gustaría agendar una hora.')}
-    anclaScroll="#servicios"
-  />
+  >
+    <BarraBeneficios slot="cierre" beneficios={beneficios} />
+  </Hero>
 
   <!-- INTRO -->
   <section class="max-w-6xl mx-auto px-6 py-[var(--spacing-seccion)]">

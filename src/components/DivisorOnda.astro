@@ -1,0 +1,94 @@
+---
+/**
+ * Divisor de onda — cierra el borde de una sección con una curva en vez de
+ * una línea recta.
+ *
+ * Dibuja el color de la sección que sigue encima de la actual, así el corte
+ * entre una foto a sangre y el fondo de página se lee como una transición.
+ *
+ * Se posiciona solo, contra el borde inferior del contenedor posicionado más
+ * cercano. El contenedor padre necesita `position: relative` (o el hero, que
+ * ya lo es) y `overflow: hidden` si la onda debe quedar recortada.
+ *
+ * PARA AJUSTARLA:
+ * - Alto (cuánto sube la cresta): el token `--onda-alto` en global.css. Es el
+ *   único control de tamaño — Hero reserva ese mismo espacio para el texto, así
+ *   que las dos piezas se mueven juntas. El relleno siempre baja hasta el borde
+ *   de la sección.
+ * - Forma de la curva: el atributo `d` del <path>. El viewBox mide 1440 x 200;
+ *   `y` chico = cresta más arriba, `y=200` = borde inferior de la sección.
+ *   Es **una sola ondulación larga** de punta a punta, como la referencia: la
+ *   cresta va plana entre x=620 y x=900 (el centro de la pantalla) y la curva
+ *   entra y sale en horizontal por los bordes. Agregar puntos de control crea
+ *   más lomas — y más lomas del mismo alto se leen como montañas más chicas.
+ *   Amplitud actual: cresta en y=52, valle en y=86 (34 unidades).
+ *   Achicar esa diferencia = onda más suave; agrandarla = más marcada.
+ *   El valle marca la parte sólida de la crema: con y=86 queda el 57% de
+ *   abajo del elemento, que es el alto con que cuenta la franja del hero.
+ *   Bajarlo recorta ese espacio; subirlo se lo da.
+ *   La cresta es lo que fija a qué altura aparece la onda en la pantalla:
+ *   con y=52 la crema empieza al 70% del alto. Subirla en units = onda más
+ *   arriba; bajarla = más abajo.
+ * - No tocar `bottom` en `.onda`: si se levanta, queda una franja sin rellenar.
+ * - La onda va en `z-index: 3`. Si algo tiene que quedar encima de su relleno
+ *   (la franja del hero, por ejemplo), ese algo necesita un z-index mayor.
+ */
+interface Props {
+  /** Color que sube desde la sección siguiente. Por defecto, el fondo de página. */
+  color?: string;
+  /** Invierte la onda, para cerrar una sección por el borde superior. */
+  voltear?: boolean;
+}
+
+const { color = 'var(--color-crema-50)', voltear = false } = Astro.props;
+---
+
+<div class:list={['onda', { 'onda--volteada': voltear }]} aria-hidden="true">
+  <svg viewBox="0 0 1440 200" preserveAspectRatio="none" focusable="false">
+    <path
+      d="M0,86 C200,86 360,52 620,52 C900,52 1120,74 1440,84 L1440,200 L0,200 Z"
+      fill={color}></path>
+  </svg>
+</div>
+
+<style>
+  /* BASE MÓVIL */
+  .onda {
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    z-index: 3;
+    width: 100%;
+    line-height: 0;
+    /* Decorativa: nunca debe interceptar clicks ni el scroll táctil */
+    pointer-events: none;
+    /* Entra subiendo y apareciendo, después de que el texto tomó la palabra:
+       la franja crema se acomoda en su lugar en vez de aparecer de golpe.
+       Anima `translate` y no `transform` para no pelearse con el rotate(180deg)
+       de la variante volteada. */
+    animation: onda-entra 1.5s var(--ease-suave) backwards;
+    animation-delay: 0.35s;
+  }
+
+  @keyframes onda-entra {
+    from {
+      opacity: 0;
+      translate: 0 14%;
+    }
+  }
+
+  /* El alto sale del token --onda-alto (global.css), que es el mismo que usa
+     Hero para reservar el espacio del texto. Subirlo en un solo lugar mueve
+     las dos cosas juntas. */
+  .onda svg {
+    display: block;
+    width: 100%;
+    height: var(--onda-alto);
+  }
+
+  .onda--volteada {
+    top: -1px;
+    bottom: auto;
+    transform: rotate(180deg);
+  }
+</style>
