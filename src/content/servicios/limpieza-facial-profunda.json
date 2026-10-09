@@ -1,0 +1,37 @@
+{
+  "nombre": "Limpieza facial profunda",
+  "titulo": "Limpieza facial profunda en La Florida",
+  "descripcion": "Tratamiento estético integral que limpia, exfolia e hidrata la piel del rostro en profundidad.",
+  "categoria": "estetica",
+  "slug": "limpieza-facial-profunda",
+  "prioridad": 3,
+  "activo": true,
+  "duracion": "[PLACEHOLDER: completar duración real]",
+  "paraQuienEs": [
+    "[PLACEHOLDER: tipos de piel o situaciones — ej: piel congestionada]",
+    "[PLACEHOLDER: ej: poros obstruidos o puntos negros]",
+    "[PLACEHOLDER: ej: mantención periódica de la piel]"
+  ],
+  "beneficios": [
+    "[PLACEHOLDER: beneficio concreto]",
+    "[PLACEHOLDER: beneficio concreto]"
+  ],
+  "contraindicaciones": [
+    "[PLACEHOLDER: ej: piel irritada o con lesiones activas]",
+    "[PLACEHOLDER: ej: tratamientos dermatológicos recientes]"
+  ],
+  "faq": [
+    {
+      "pregunta": "¿En qué consiste una limpieza facial profunda?",
+      "respuesta": "[PLACEHOLDER: pasos del tratamiento]"
+    },
+    {
+      "pregunta": "¿Cada cuánto se recomienda hacerla?",
+      "respuesta": "[PLACEHOLDER: frecuencia según tipo de piel]"
+    },
+    {
+      "pregunta": "¿Sirve para piel sensible?",
+      "respuesta": "[PLACEHOLDER: adaptación del tratamiento]"
+    }
+  ]
+}

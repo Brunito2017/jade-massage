@@ -1,0 +1,14 @@
+{
+  "nombre": "Masaje Champi",
+  "titulo": "Masaje Champi (cabeza) en La Florida",
+  "descripcion": "Masaje de cabeza, cuello y hombros de origen ayurvédico, para liberar la tensión acumulada.",
+  "categoria": "masoterapia",
+  "slug": "masaje-champi",
+  "prioridad": 7,
+  "activo": false,
+  "duracion": "[PLACEHOLDER]",
+  "paraQuienEs": ["[PLACEHOLDER]"],
+  "beneficios": ["[PLACEHOLDER]"],
+  "contraindicaciones": ["[PLACEHOLDER]"],
+  "faq": []
+}

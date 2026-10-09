@@ -1,0 +1,14 @@
+{
+  "nombre": "Masaje relajante",
+  "titulo": "Masaje relajante en La Florida",
+  "descripcion": "Masaje de presión suave y ritmo pausado, orientado a la desconexión y el descanso profundo.",
+  "categoria": "masoterapia",
+  "slug": "masaje-relajante",
+  "prioridad": 4,
+  "activo": false,
+  "duracion": "[PLACEHOLDER]",
+  "paraQuienEs": ["[PLACEHOLDER]"],
+  "beneficios": ["[PLACEHOLDER]"],
+  "contraindicaciones": ["[PLACEHOLDER]"],
+  "faq": []
+}

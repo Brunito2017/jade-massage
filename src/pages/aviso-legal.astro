@@ -1,0 +1,69 @@
+---
+import Base from '../layouts/Base.astro';
+import SEO from '../components/SEO.astro';
+import { SITE } from '../data/site';
+
+const titulo = `Aviso legal | ${SITE.nombre}`;
+const descripcion =
+  'Información legal, política de privacidad y condiciones de uso del sitio de Jade Belleza y Spa.';
+---
+
+<Base>
+  <SEO slot="head" titulo={titulo} descripcion={descripcion} noindex />
+
+  <section class="max-w-3xl mx-auto px-6 pt-20 pb-24">
+    <h1 class="font-serif text-4xl text-tierra-900 mb-4">Aviso legal</h1>
+    <p class="text-sm text-tierra-500 mb-14">
+      [PLACEHOLDER: revisar y completar con los datos legales reales del negocio antes
+      de publicar.]
+    </p>
+
+    <div class="space-y-12 text-tierra-700 leading-relaxed">
+      <section>
+        <h2 class="font-serif text-2xl text-tierra-900 mb-4">Titular del sitio</h2>
+        <p>
+          [PLACEHOLDER: nombre legal, RUT, domicilio, correo de contacto]
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-serif text-2xl text-tierra-900 mb-4">
+          Naturaleza de los servicios
+        </h2>
+        <p>
+          Los servicios ofrecidos son de masoterapia y estética. No constituyen
+          tratamiento médico ni reemplazan la atención de un profesional de la salud.
+          Ante dudas sobre tu condición, consultá a un médico.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-serif text-2xl text-tierra-900 mb-4">
+          Política de privacidad
+        </h2>
+        <p>
+          [PLACEHOLDER: qué datos se recopilan (por ejemplo, si se agrega analítica),
+          con qué finalidad y por cuánto tiempo. Si no se recopila ningún dato, indicarlo.]
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-serif text-2xl text-tierra-900 mb-4">
+          Propiedad intelectual
+        </h2>
+        <p>
+          [PLACEHOLDER: titularidad de los contenidos e imágenes del sitio.]
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-serif text-2xl text-tierra-900 mb-4">
+          Condiciones de agendamiento
+        </h2>
+        <p>
+          [PLACEHOLDER: política de reservas, cancelaciones y reprogramaciones.]
+        </p>
+      </section>
+    </div>
+  </section>
+</Base>

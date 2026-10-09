@@ -1,0 +1,217 @@
+---
+/**
+ * Bloque de texto del hero. Lo comparten todas las variantes de layout,
+ * así el contenido vive en un solo lugar y solo cambia la composición.
+ */
+interface Props {
+  eyebrow: string;
+  titulo: string;
+  subtitulo: string;
+  ctaTexto: string;
+  ctaHref: string;
+  /** `claro` = texto sobre imagen; `oscuro` = texto sobre fondo de página. */
+  tono?: 'claro' | 'oscuro';
+  /** `centro` para heros centrados, `izquierda` para el split. */
+  alineacion?: 'centro' | 'izquierda';
+}
+
+const {
+  eyebrow,
+  titulo,
+  subtitulo,
+  ctaTexto,
+  ctaHref,
+  tono = 'claro',
+  alineacion = 'centro',
+} = Astro.props;
+---
+
+<div class:list={['hero-texto', `hero-texto--${tono}`, `hero-texto--${alineacion}`]}>
+  <p class="hero-texto__eyebrow">{eyebrow}</p>
+  <h1 class="hero-texto__titulo">{titulo}</h1>
+  <div class="hero-texto__sub">
+    <p>{subtitulo}</p>
+  </div>
+  <div class="hero-texto__acciones">
+    <a href={ctaHref} target="_blank" rel="noopener" class="hero-texto__boton">
+      {ctaTexto}
+    </a>
+  </div>
+</div>
+
+<style>
+  .hero-texto {
+    text-align: center;
+  }
+
+  .hero-texto--izquierda {
+    text-align: left;
+  }
+
+  /* Aparecer escalonado */
+  .hero-texto > * {
+    opacity: 0;
+    transform: translateY(1.25rem);
+    animation: hero-rise 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .hero-texto > *:nth-child(1) {
+    animation-delay: 0.15s;
+  }
+  .hero-texto > *:nth-child(2) {
+    animation-delay: 0.32s;
+  }
+  .hero-texto > *:nth-child(3) {
+    animation-delay: 0.5s;
+  }
+  .hero-texto > *:nth-child(4) {
+    animation-delay: 0.68s;
+  }
+
+  @keyframes hero-rise {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .hero-texto__eyebrow {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.28em;
+    margin-bottom: 1rem;
+  }
+
+  .hero-texto__titulo {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: clamp(1.95rem, 7.6vw, 2.6rem);
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+  }
+
+  .hero-texto__sub {
+    margin: 1.35rem auto 0;
+    max-width: 34rem;
+  }
+
+  .hero-texto--izquierda .hero-texto__sub {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .hero-texto__sub p {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .hero-texto__acciones {
+    margin-top: 1.85rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    justify-content: center;
+  }
+
+  .hero-texto--izquierda .hero-texto__acciones {
+    justify-content: flex-start;
+  }
+
+  .hero-texto__boton {
+    display: inline-block;
+    padding: 1rem 2.1rem;
+    border-radius: 9999px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition:
+      background-color 0.25s ease,
+      color 0.25s ease;
+  }
+
+  /* Sobre imagen */
+  .hero-texto--claro .hero-texto__eyebrow {
+    color: color-mix(in oklch, var(--color-crema-100) 78%, transparent);
+    text-shadow: 0 1px 8px rgba(30, 20, 12, 0.6);
+  }
+
+  .hero-texto--claro .hero-texto__titulo {
+    color: var(--color-crema-50);
+    text-shadow:
+      0 1px 3px rgba(30, 20, 12, 0.85),
+      0 2px 14px rgba(30, 20, 12, 0.6);
+  }
+
+  .hero-texto--claro .hero-texto__sub p {
+    color: color-mix(in oklch, var(--color-crema-100) 90%, transparent);
+    text-shadow: 0 1px 8px rgba(30, 20, 12, 0.55);
+  }
+
+  .hero-texto--claro .hero-texto__boton {
+    background-color: var(--color-crema-50);
+    color: var(--color-tierra-900);
+  }
+
+  .hero-texto--claro .hero-texto__boton:hover {
+    background-color: var(--color-crema-200);
+  }
+
+  /* Sobre fondo de página */
+  .hero-texto--oscuro .hero-texto__eyebrow {
+    color: var(--color-tierra-400);
+  }
+
+  .hero-texto--oscuro .hero-texto__titulo {
+    color: var(--color-tierra-900);
+  }
+
+  .hero-texto--oscuro .hero-texto__sub p {
+    color: var(--color-tierra-700);
+  }
+
+  .hero-texto--oscuro .hero-texto__boton {
+    background-color: var(--color-tierra-900);
+    color: var(--color-crema-50);
+  }
+
+  .hero-texto--oscuro .hero-texto__boton:hover {
+    background-color: var(--color-tierra-700);
+  }
+
+  @media (min-width: 768px) {
+    .hero-texto__eyebrow {
+      font-size: 0.78rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-texto__titulo {
+      font-size: clamp(2.5rem, 4.6vw, 5.2rem);
+      line-height: 1.05;
+    }
+
+    .hero-texto__sub {
+      margin-top: 1.65rem;
+    }
+
+    .hero-texto__sub p {
+      font-size: 1.1rem;
+    }
+
+    .hero-texto__acciones {
+      margin-top: 2.35rem;
+    }
+
+    .hero-texto__boton {
+      font-size: 1rem;
+      padding: 1.1rem 2.4rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-texto > * {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
+  }
+</style>

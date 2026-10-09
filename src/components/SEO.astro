@@ -1,0 +1,49 @@
+---
+import { SITE } from '../data/site';
+
+interface Props {
+  titulo: string;
+  descripcion: string;
+  imagen?: string;
+  tipo?: 'website' | 'article';
+  noindex?: boolean;
+  schema?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const {
+  titulo,
+  descripcion,
+  imagen = '/og-default.jpg',
+  tipo = 'website',
+  noindex = false,
+  schema,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE.url).href;
+const imagenAbsoluta = new URL(imagen, Astro.site ?? SITE.url).href;
+const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
+---
+
+<title>{titulo}</title>
+<meta name="description" content={descripcion} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+
+<meta property="og:type" content={tipo} />
+<meta property="og:site_name" content={SITE.nombre} />
+<meta property="og:title" content={titulo} />
+<meta property="og:description" content={descripcion} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={imagenAbsoluta} />
+<meta property="og:locale" content="es_CL" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={titulo} />
+<meta name="twitter:description" content={descripcion} />
+<meta name="twitter:image" content={imagenAbsoluta} />
+
+{
+  schemas.map((s) => (
+    <script type="application/ld+json" set:html={JSON.stringify(s)} is:inline />
+  ))
+}

@@ -1,0 +1,89 @@
+---
+/**
+ * PÁGINA DE TRABAJO — no publicar.
+ * Sirve para comparar las variantes del hero. Excluida del sitemap en astro.config.
+ */
+import { Font } from 'astro:assets';
+import '../styles/global.css';
+import Hero from '../components/Hero.astro';
+import { SITE, whatsappLink } from '../data/site';
+
+const IMAGEN = 'https://i.pinimg.com/736x/e1/4e/08/e14e08b00346470ac7b345320442b302.jpg';
+const CTA = whatsappLink('Hola, me gustaría agendar una hora.');
+
+const variantes = [
+  { id: 'completo', nombre: 'Actual — imagen completa', nota: 'Todo el ancho, el color de página no se ve' },
+  { id: 'marco', nombre: 'A — Marco con margen', nota: 'La foto no toca los bordes' },
+  { id: 'split', nombre: 'B — Split asimétrico', nota: 'Foto y color repartidos' },
+  { id: 'bloque', nombre: 'C — Bloque de color', nota: 'Banda sólida que ancla el texto' },
+] as const;
+---
+
+<!doctype html>
+<html lang={SITE.idioma}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Variantes del hero — Jade Belleza y Spa</title>
+    <Font cssVariable="--font-serif" preload />
+    <Font cssVariable="--font-sans" />
+  </head>
+
+  <body>
+    {
+      variantes.map((v) => (
+        <div class="variante" id={v.id}>
+          <p class="variante__tag">
+            <strong>{v.nombre}</strong>
+            <span>{v.nota}</span>
+          </p>
+          <Hero
+            variante={v.id}
+            imagen={IMAGEN}
+            eyebrow={`${SITE.comuna}, Santiago`}
+            titulo="Masoterapia y estética integral en La Florida"
+            subtitulo="Un espacio dedicado al cuidado del cuerpo y la calma. Masaje descontracturante, drenaje linfático y tratamientos faciales, con atención personalizada."
+            ctaTexto="Agendar por WhatsApp"
+            ctaHref={CTA}
+            anclaScroll="#servicios"
+          />
+        </div>
+      ))
+    }
+  </body>
+</html>
+
+<style>
+  .variante {
+    position: relative;
+  }
+
+  .variante__tag {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    background-color: var(--color-tierra-950);
+    color: var(--color-crema-50);
+    padding: 0.5rem 0.85rem;
+    border-radius: 0.25rem;
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    line-height: 1.35;
+    max-width: 15rem;
+    opacity: 0.92;
+  }
+
+  .variante__tag strong {
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  .variante__tag span {
+    color: color-mix(in oklch, var(--color-crema-100) 65%, transparent);
+  }
+</style>

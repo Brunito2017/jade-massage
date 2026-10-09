@@ -1,0 +1,44 @@
+{
+  "nombre": "Masaje descontracturante",
+  "titulo": "Masaje descontracturante en La Florida",
+  "descripcion": "Terapia manual enfocada en liberar contracturas y tensión muscular profunda. Nuestro servicio más solicitado.",
+  "categoria": "masoterapia",
+  "slug": "masaje-descontracturante",
+  "prioridad": 1,
+  "activo": true,
+  "duracion": "[PLACEHOLDER: completar duración real — ej: 50 minutos]",
+  "paraQuienEs": [
+    "[PLACEHOLDER: situaciones concretas — ej: dolor cervical por trabajo de oficina]",
+    "[PLACEHOLDER: ej: contracturas lumbares por postura o esfuerzo]",
+    "[PLACEHOLDER: ej: tensión acumulada por estrés]",
+    "[PLACEHOLDER: ej: rigidez de hombros y cuello]"
+  ],
+  "beneficios": [
+    "[PLACEHOLDER: beneficio concreto — ej: alivio de la tensión muscular]",
+    "[PLACEHOLDER: ej: mejora de la movilidad en la zona tratada]",
+    "[PLACEHOLDER: ej: reducción del dolor asociado a contracturas]"
+  ],
+  "contraindicaciones": [
+    "[PLACEHOLDER: ej: fiebre o infección activa]",
+    "[PLACEHOLDER: ej: lesiones o traumatismos recientes sin diagnóstico]",
+    "[PLACEHOLDER: ej: embarazo — consultar antes]"
+  ],
+  "faq": [
+    {
+      "pregunta": "¿Qué es un masaje descontracturante?",
+      "respuesta": "[PLACEHOLDER: explicación de la técnica, 2-3 frases]"
+    },
+    {
+      "pregunta": "¿Cuánto dura una sesión?",
+      "respuesta": "[PLACEHOLDER: duración y qué incluye]"
+    },
+    {
+      "pregunta": "¿Cada cuánto tiempo conviene repetirlo?",
+      "respuesta": "[PLACEHOLDER: frecuencia recomendada]"
+    },
+    {
+      "pregunta": "¿Duele?",
+      "respuesta": "[PLACEHOLDER: qué sensación esperar durante y después]"
+    }
+  ]
+}

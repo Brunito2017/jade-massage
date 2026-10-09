@@ -1,0 +1,14 @@
+{
+  "nombre": "Tratamiento reductivo",
+  "titulo": "Tratamiento reductivo en La Florida",
+  "descripcion": "Tratamiento corporal con aparatología, organizado en sesiones por zona.",
+  "categoria": "estetica",
+  "slug": "tratamiento-reductivo",
+  "prioridad": 6,
+  "activo": false,
+  "duracion": "[PLACEHOLDER]",
+  "paraQuienEs": ["[PLACEHOLDER]"],
+  "beneficios": ["[PLACEHOLDER]"],
+  "contraindicaciones": ["[PLACEHOLDER]"],
+  "faq": []
+}

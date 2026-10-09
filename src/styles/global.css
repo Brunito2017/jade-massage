@@ -1,0 +1,118 @@
+@import 'tailwindcss';
+
+@theme {
+  /* Tipografías — inyectadas por la Fonts API de Astro */
+  --font-serif: var(--font-serif);
+  --font-sans: var(--font-sans);
+
+  /* Paleta tierra — minimalista de lujo, cálida y sofisticada */
+  --color-tierra-50: oklch(0.97 0.008 75);
+  --color-tierra-100: oklch(0.94 0.014 72);
+  --color-tierra-200: oklch(0.87 0.024 68);
+  --color-tierra-300: oklch(0.77 0.036 63);
+  --color-tierra-400: oklch(0.65 0.05 58);
+  --color-tierra-500: oklch(0.53 0.058 52);
+  --color-tierra-600: oklch(0.44 0.055 48);
+  --color-tierra-700: oklch(0.36 0.048 44);
+  --color-tierra-800: oklch(0.28 0.038 42);
+  --color-tierra-900: oklch(0.22 0.028 40);
+  --color-tierra-950: oklch(0.16 0.02 38);
+
+  /* Crema / beige — acentos y fondos cálidos */
+  --color-crema-50: oklch(0.985 0.008 85);
+  --color-crema-100: oklch(0.965 0.014 82);
+  --color-crema-200: oklch(0.93 0.022 80);
+  --color-crema-300: oklch(0.88 0.03 78);
+
+  /* Espaciado de secciones — ritmo amplio, aire */
+  --spacing-seccion: 6rem;
+  --spacing-seccion-movil: 4rem;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background-color: var(--color-crema-50);
+    color: var(--color-tierra-900);
+    font-family: var(--font-sans), system-ui, sans-serif;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-serif), Georgia, serif;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+}
+
+/* Transiciones de página nativas — sin JavaScript de router */
+@view-transition {
+  navigation: auto;
+}
+
+/* ============================================================
+   HEADER — transparente sobre el hero, sólido al scrollear
+   ============================================================ */
+
+.site-logo,
+.site-logo__rest,
+.site-nav-link a {
+  color: var(--color-tierra-900);
+  transition: color 0.3s ease;
+}
+
+/* Sobre el hero: texto claro */
+#site-header[data-transparente='true']:not([data-scrolled]) {
+  /* El header queda por encima del velo del hero, así que necesita el suyo:
+     sin esto, el logo y el nav caen sobre la zona clara de la imagen. */
+  background: linear-gradient(
+    to bottom,
+    color-mix(in oklch, var(--color-tierra-950) 62%, transparent),
+    transparent
+  );
+}
+
+#site-header[data-transparente='true']:not([data-scrolled]) .site-logo,
+#site-header[data-transparente='true']:not([data-scrolled]) .site-logo__rest,
+#site-header[data-transparente='true']:not([data-scrolled]) .site-nav-link a {
+  color: var(--color-crema-50);
+}
+
+#site-header[data-transparente='true']:not([data-scrolled]) .site-logo,
+#site-header[data-transparente='true']:not([data-scrolled]) .site-nav-link a {
+  text-shadow:
+    0 1px 3px rgba(20, 14, 8, 0.9),
+    0 2px 12px rgba(20, 14, 8, 0.7);
+}
+
+#site-header[data-scrolled] {
+  background-color: color-mix(in oklch, var(--color-crema-50) 88%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom-color: color-mix(in oklch, var(--color-tierra-900) 8%, transparent);
+}
+
+.site-nav-link a:hover {
+  color: var(--color-tierra-600);
+}
+
+#site-header[data-transparente='true']:not([data-scrolled]) .site-nav-link a:hover {
+  color: var(--color-crema-200);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,349 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import SEO from '../components/SEO.astro';
+import Hero from '../components/Hero.astro';
+import { SITE, whatsappLink } from '../data/site';
+import { negocioLocal } from '../data/schema';
+import { VARIANTES_HERO, type VarianteHero } from '../data/hero';
+
+/** Variante de hero elegida para la home. */
+const varianteHero: VarianteHero = 'completo';
+
+/**
+ * PROVISIONAL: hotlink desde Pinterest, sin licencia verificada para uso comercial
+ * y dependiente de que i.pinimg.com no bloquee el acceso ni cambie la URL.
+ * Reemplazar por foto propia de Roxana o una libre antes de publicar.
+ */
+const IMAGEN_HERO = 'https://i.pinimg.com/736x/e1/4e/08/e14e08b00346470ac7b345320442b302.jpg';
+const titulo = 'Masoterapia y estética integral en La Florida | Jade Belleza y Spa';
+const descripcion =
+  'Centro de masoterapia clínica y estética integral en La Florida, Santiago. Masaje descontracturante, drenaje linfático y limpieza facial profunda. Agenda por WhatsApp.';
+
+const servicios = (await getCollection('servicios')).sort(
+  (a, b) => a.data.prioridad - b.data.prioridad
+);
+const activos = servicios.filter((s) => s.data.activo);
+const inactivos = servicios.filter((s) => !s.data.activo);
+const destacado = servicios.find((s) => s.data.prioridad === 1)!;
+
+const pasos = [
+  {
+    numero: '01',
+    titulo: 'Consulta inicial',
+    texto: 'Conversamos sobre tus molestias, tu historial y qué esperás de la sesión.',
+  },
+  {
+    numero: '02',
+    titulo: 'Evaluación',
+    texto: 'Se identifica la zona a tratar y se define el enfoque más adecuado.',
+  },
+  {
+    numero: '03',
+    titulo: 'La sesión',
+    texto: '[PLACEHOLDER: describir el ambiente y el desarrollo del masaje]',
+  },
+  {
+    numero: '04',
+    titulo: 'Recomendaciones',
+    texto: '[PLACEHOLDER: indicaciones posteriores y autocuidado]',
+  },
+];
+
+const motivos = [
+  {
+    titulo: 'Enfoque clínico',
+    texto: '[PLACEHOLDER: qué diferencia el trabajo de Roxana de un masaje genérico]',
+  },
+  {
+    titulo: 'Atención personalizada',
+    texto: '[PLACEHOLDER: cómo se adapta cada sesión a la persona]',
+  },
+  {
+    titulo: 'Espacio de desconexión',
+    texto: '[PLACEHOLDER: descripción del ambiente del espacio]',
+  },
+];
+
+const faq = [
+  {
+    pregunta: '¿Dónde queda Jade Belleza y Spa?',
+    respuesta: `En ${SITE.comuna}, Santiago. Por ahora coordinamos la dirección exacta al agendar.`,
+  },
+  {
+    pregunta: '¿Cómo agendo una hora?',
+    respuesta: 'Escríbenos por WhatsApp al ' + SITE.telefono + ' y coordinamos día y horario.',
+  },
+  {
+    pregunta: '¿Cuánto cuestan los servicios?',
+    respuesta: 'Los valores se consultan directamente por WhatsApp, según el servicio y la zona a tratar.',
+  },
+  {
+    pregunta: '¿Necesito preparar algo antes de la sesión?',
+    respuesta: '[PLACEHOLDER: indicaciones previas — ej: llegar descansada, no venir en ayunas]',
+  },
+];
+---
+
+<Base heroTransparente={VARIANTES_HERO[varianteHero].headerTransparente}>
+  <SEO
+    slot="head"
+    titulo={titulo}
+    descripcion={descripcion}
+    schema={negocioLocal()}
+  />
+
+  <Hero
+    variante={varianteHero}
+    imagen={IMAGEN_HERO}
+    eyebrow={`${SITE.comuna}, Santiago`}
+    titulo="Masoterapia y estética integral en La Florida"
+    subtitulo="Un espacio dedicado al cuidado del cuerpo y la calma. Masaje descontracturante, drenaje linfático y tratamientos faciales, con atención personalizada."
+    ctaTexto="Agendar por WhatsApp"
+    ctaHref={whatsappLink('Hola, me gustaría agendar una hora.')}
+    anclaScroll="#servicios"
+  />
+
+  <!-- INTRO -->
+  <section class="max-w-6xl mx-auto px-6 py-[var(--spacing-seccion)]">
+    <div class="max-w-3xl">
+      <h2 class="font-serif text-3xl md:text-4xl text-tierra-900 mb-6">
+        Cuidar el cuerpo, con calma
+      </h2>
+      <p class="text-tierra-700 leading-relaxed mb-4">
+        Jade Belleza y Spa nace de la convicción de que el bienestar no es un lujo: es una
+        necesidad. Cada sesión se piensa como un momento para detenerse, respirar y volver
+        al cuerpo.
+      </p>
+      <p class="text-tierra-700 leading-relaxed">
+        [PLACEHOLDER: 2-3 líneas sobre el enfoque de Roxana y qué hace distinto a Jade]
+      </p>
+    </div>
+  </section>
+
+  <!-- SERVICIOS -->
+  <section id="servicios" class="bg-crema-100 py-[var(--spacing-seccion)]">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="max-w-2xl mb-14">
+        <h2 class="font-serif text-3xl md:text-4xl text-tierra-900 mb-5">Servicios</h2>
+        <p class="text-tierra-700 leading-relaxed">
+          Terapias manuales y tratamientos estéticos, adaptados a lo que tu cuerpo necesita.
+        </p>
+      </div>
+
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          activos.map((servicio) => (
+            <a
+              href={`/servicios/${servicio.data.slug}/`}
+              class="group block bg-crema-50 p-8 rounded-sm border border-tierra-900/8 hover:border-tierra-900/20 hover:shadow-sm transition-all"
+            >
+              <h3 class="font-serif text-2xl text-tierra-900 mb-3 group-hover:text-tierra-600 transition-colors">
+                {servicio.data.nombre}
+              </h3>
+              <p class="text-sm text-tierra-700 leading-relaxed mb-6">
+                {servicio.data.descripcion}
+              </p>
+              <span class="text-sm text-tierra-600 underline underline-offset-4">
+                Ver más
+              </span>
+            </a>
+          ))
+        }
+      </div>
+
+      <div class="mt-14 pt-10 border-t border-tierra-900/10">
+        <p class="text-sm uppercase tracking-[0.2em] text-tierra-500 mb-6">
+          También disponible
+        </p>
+        <ul class="flex flex-wrap gap-x-8 gap-y-3 text-tierra-700">
+          {
+            inactivos.map((servicio) => (
+              <li class="font-serif text-xl text-tierra-600">{servicio.data.nombre}</li>
+            ))
+          }
+        </ul>
+        <p class="text-sm text-tierra-500 mt-6">
+          Consultá por estos y otros tratamientos por WhatsApp.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DESTACADO: DESCONTRACTURANTE -->
+  <section class="py-[var(--spacing-seccion)]">
+    <div class="max-w-6xl mx-auto px-6 grid gap-14 lg:grid-cols-2 items-center">
+      <div class="bg-tierra-300 aspect-[4/3] rounded-sm grid place-items-center">
+        <!-- PLACEHOLDER: foto real del servicio estrella -->
+        <p class="text-tierra-600 text-sm tracking-widest uppercase px-6 text-center">
+          [Imagen: masaje descontracturante]
+        </p>
+      </div>
+
+      <div>
+        <p class="text-sm uppercase tracking-[0.25em] text-tierra-500 mb-5">
+          El más solicitado
+        </p>
+        <h2 class="font-serif text-3xl md:text-4xl text-tierra-900 mb-6">
+          {destacado.data.nombre}
+        </h2>
+        <p class="text-tierra-700 leading-relaxed mb-6">
+          {destacado.data.descripcion}
+        </p>
+        <p class="text-tierra-700 leading-relaxed mb-8">
+          [PLACEHOLDER: 2-3 líneas sobre qué resuelve este masaje y a quién ayuda —
+          dolor cervical, contracturas lumbares, tensión por estrés]
+        </p>
+        <a
+          href={`/servicios/${destacado.data.slug}/`}
+          class="inline-block bg-tierra-900 text-crema-50 px-8 py-4 rounded-full hover:bg-tierra-700 transition-colors"
+        >
+          Conocer más
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- POR QUÉ JADE -->
+  <section class="bg-tierra-950 text-crema-100 py-[var(--spacing-seccion)]">
+    <div class="max-w-6xl mx-auto px-6">
+      <h2 class="font-serif text-3xl md:text-4xl text-crema-50 mb-14 max-w-2xl">
+        Por qué elegir Jade
+      </h2>
+      <div class="grid gap-10 md:grid-cols-3">
+        {
+          motivos.map((motivo) => (
+            <div>
+              <h3 class="font-serif text-xl text-crema-50 mb-4">{motivo.titulo}</h3>
+              <p class="text-sm text-crema-200/70 leading-relaxed">{motivo.texto}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- CÓMO ES UNA SESIÓN -->
+  <section class="py-[var(--spacing-seccion)]">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="max-w-2xl mb-14">
+        <h2 class="font-serif text-3xl md:text-4xl text-tierra-900 mb-5">
+          Cómo es una sesión
+        </h2>
+        <p class="text-tierra-700 leading-relaxed">
+          Desde que llegás hasta que te vas, así se desarrolla el encuentro.
+        </p>
+      </div>
+
+      <ol class="grid gap-8 md:grid-cols-4">
+        {
+          pasos.map((paso) => (
+            <li>
+              <p class="font-serif text-4xl text-tierra-300 mb-4">{paso.numero}</p>
+              <h3 class="font-serif text-lg text-tierra-900 mb-3">{paso.titulo}</h3>
+              <p class="text-sm text-tierra-700 leading-relaxed">{paso.texto}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- SOBRE ROXANA -->
+  <section class="bg-crema-100 py-[var(--spacing-seccion)]">
+    <div class="max-w-6xl mx-auto px-6 grid gap-14 lg:grid-cols-2 items-center">
+      <div>
+        <p class="text-sm uppercase tracking-[0.25em] text-tierra-500 mb-5">
+          Quién te atiende
+        </p>
+        <h2 class="font-serif text-3xl md:text-4xl text-tierra-900 mb-6">Roxana</h2>
+        <p class="text-tierra-700 leading-relaxed mb-6">
+          Masoterapeuta clínica y esteticista integral.
+        </p>
+        <p class="text-tierra-700 leading-relaxed mb-8">
+          [PLACEHOLDER: 3-4 líneas sobre su formación, su enfoque y por qué abrió Jade.
+          Ver /sobre-roxana/ para la lista completa de datos a completar.]
+        </p>
+        <a
+          href="/sobre-roxana/"
+          class="inline-block border border-tierra-900/25 text-tierra-900 px-8 py-4 rounded-full hover:bg-tierra-900 hover:text-crema-50 transition-colors"
+        >
+          Conocer a Roxana
+        </a>
+      </div>
+
+      <div class="bg-tierra-200 aspect-[4/5] rounded-sm grid place-items-center">
+        <!-- PLACEHOLDER: foto real de Roxana — no stock -->
+        <p class="text-tierra-500 text-sm tracking-widest uppercase px-6 text-center">
+          [Imagen: retrato de Roxana trabajando]
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIOS -->
+  <section class="py-[var(--spacing-seccion)]">
+    <div class="max-w-6xl mx-auto px-6">
+      <h2 class="font-serif text-3xl md:text-4xl text-tierra-900 mb-14">
+        Lo que dicen nuestras clientas
+      </h2>
+      <div class="grid gap-8 md:grid-cols-3">
+        {
+          [1, 2, 3].map(() => (
+            <blockquote class="bg-crema-100 p-8 rounded-sm border border-tierra-900/8">
+              <p class="text-tierra-700 leading-relaxed mb-6 italic">
+                [PLACEHOLDER: reseña real de una clienta — no inventar. Pedir a Roxana
+                que reúna 2-3 testimonios con permiso.]
+              </p>
+              <footer class="text-sm text-tierra-500">— [Nombre]</footer>
+            </blockquote>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="bg-crema-100 py-[var(--spacing-seccion)]">
+    <div class="max-w-3xl mx-auto px-6">
+      <h2 class="font-serif text-3xl md:text-4xl text-tierra-900 mb-14">
+        Preguntas frecuentes
+      </h2>
+      <div class="space-y-2">
+        {
+          faq.map((item) => (
+            <details class="group bg-crema-50 rounded-sm border border-tierra-900/8">
+              <summary class="cursor-pointer list-none px-6 py-5 flex justify-between items-center gap-4 font-serif text-lg text-tierra-900">
+                {item.pregunta}
+                <span class="text-tierra-400 group-open:rotate-45 transition-transform text-2xl leading-none">
+                  +
+                </span>
+              </summary>
+              <p class="px-6 pb-6 text-tierra-700 leading-relaxed">{item.respuesta}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="max-w-6xl mx-auto px-6 py-[var(--spacing-seccion)]">
+    <div class="bg-tierra-900 rounded-sm px-8 py-20 md:px-20 text-center">
+      <h2 class="font-serif text-3xl md:text-5xl text-crema-50 mb-6">
+        Regalate un momento
+      </h2>
+      <p class="text-crema-200/80 leading-relaxed mb-10 max-w-xl mx-auto">
+        Escríbenos y coordinamos el día y la hora que mejor te acomode.
+      </p>
+      <a
+        href={whatsappLink('Hola, me gustaría agendar una hora.')}
+        target="_blank"
+        rel="noopener"
+        class="inline-block bg-crema-50 text-tierra-900 px-10 py-4 rounded-full hover:bg-crema-200 transition-colors"
+      >
+        {SITE.telefono}
+      </a>
+    </div>
+  </section>
+</Base>

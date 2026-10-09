@@ -1,0 +1,133 @@
+---
+import { Font } from 'astro:assets';
+import '../styles/global.css';
+import { SITE, whatsappLink } from '../data/site';
+
+interface Props {
+  /** Header transparente sobre el hero, sólido al scrollear. */
+  heroTransparente?: boolean;
+}
+
+const { heroTransparente = false } = Astro.props;
+---
+
+<!doctype html>
+<html lang={SITE.idioma}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <Font cssVariable="--font-serif" preload />
+    <Font cssVariable="--font-sans" />
+    <slot name="head" />
+  </head>
+
+  <body class="min-h-screen flex flex-col">
+    <a
+      href="#contenido"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-tierra-900 focus:text-crema-50 focus:px-4 focus:py-2 focus:rounded"
+    >
+      Saltar al contenido
+    </a>
+
+    <header
+      id="site-header"
+      data-transparente={heroTransparente ? 'true' : undefined}
+      class:list={[
+        'top-0 z-40 transition-colors duration-300',
+        // Transparente = flota por encima del hero, así la imagen llega al borde
+        // superior. Sólido = ocupa su espacio en el flujo, como cualquier header.
+        heroTransparente
+          ? 'fixed inset-x-0 bg-transparent border-b border-transparent'
+          : 'sticky bg-crema-50/85 backdrop-blur-sm border-b border-tierra-900/8',
+      ]}
+    >
+      <nav
+        class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between"
+        aria-label="Navegación principal"
+      >
+        <a href="/" class="site-logo font-serif text-2xl tracking-tight">
+          Jade<span class="site-logo__rest"> Belleza y Spa</span>
+        </a>
+
+        <ul class="hidden md:flex items-center gap-9 text-sm site-nav-link">
+          <li><a href="/servicios/" class="transition-colors">Servicios</a></li>
+          <li><a href="/sobre-roxana/" class="transition-colors">Sobre Roxana</a></li>
+          <li><a href="/contacto/" class="transition-colors">Contacto</a></li>
+        </ul>
+
+        <a
+          href={whatsappLink('Hola, me gustaría consultar por un servicio.')}
+          target="_blank"
+          rel="noopener"
+          class="text-sm bg-tierra-900 text-crema-50 px-5 py-2.5 rounded-full hover:bg-tierra-700 transition-colors"
+        >
+          Agendar
+        </a>
+      </nav>
+    </header>
+
+    <main id="contenido" class="flex-1">
+      <slot />
+    </main>
+
+    <footer class="bg-tierra-950 text-crema-100 mt-24">
+      <div class="max-w-6xl mx-auto px-6 py-16 grid gap-12 md:grid-cols-3">
+        <div>
+          <p class="font-serif text-2xl text-crema-50 mb-4">Jade Belleza y Spa</p>
+          <p class="text-sm text-crema-200/70 leading-relaxed">
+            Masoterapia clínica y estética integral en {SITE.comuna}, Santiago.
+          </p>
+        </div>
+
+        <div>
+          <p class="text-sm uppercase tracking-widest text-crema-200/50 mb-4">Servicios</p>
+          <ul class="space-y-2.5 text-sm text-crema-200/80">
+            <li><a href="/servicios/masaje-descontracturante/" class="hover:text-crema-50 transition-colors">Masaje descontracturante</a></li>
+            <li><a href="/servicios/drenaje-linfatico/" class="hover:text-crema-50 transition-colors">Drenaje linfático</a></li>
+            <li><a href="/servicios/limpieza-facial-profunda/" class="hover:text-crema-50 transition-colors">Limpieza facial profunda</a></li>
+            <li><a href="/servicios/" class="hover:text-crema-50 transition-colors">Ver todos</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="text-sm uppercase tracking-widest text-crema-200/50 mb-4">Contacto</p>
+          <ul class="space-y-2.5 text-sm text-crema-200/80">
+            <li>
+              <a href={whatsappLink()} target="_blank" rel="noopener" class="hover:text-crema-50 transition-colors">
+                {SITE.telefono}
+              </a>
+            </li>
+            <li>
+              <a href={SITE.instagram} target="_blank" rel="noopener" class="hover:text-crema-50 transition-colors">
+                Instagram
+              </a>
+            </li>
+            <li class="text-crema-200/50">{SITE.comuna}, {SITE.region}</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="border-t border-crema-200/10">
+        <div class="max-w-6xl mx-auto px-6 py-6 flex flex-col sm:flex-row justify-between gap-3 text-xs text-crema-200/40">
+          <p>© {new Date().getFullYear()} {SITE.nombre}</p>
+          <a href="/aviso-legal/" class="hover:text-crema-200/70 transition-colors">Aviso legal</a>
+        </div>
+      </div>
+    </footer>
+
+    {
+      heroTransparente && (
+        <script is:inline>
+          const header = document.getElementById('site-header');
+          const marcar = () => {
+            if (window.scrollY > 40) header.setAttribute('data-scrolled', '');
+            else header.removeAttribute('data-scrolled');
+          };
+          marcar();
+          window.addEventListener('scroll', marcar, { passive: true });
+        </script>
+      )
+    }
+  </body>
+</html>

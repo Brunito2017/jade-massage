@@ -1,0 +1,14 @@
+{
+  "nombre": "Masaje con piedras calientes",
+  "titulo": "Masaje con piedras calientes en La Florida",
+  "descripcion": "Masaje que combina terapia manual con el calor de piedras volcánicas para relajar la musculatura en profundidad.",
+  "categoria": "masoterapia",
+  "slug": "masaje-piedras-calientes",
+  "prioridad": 5,
+  "activo": false,
+  "duracion": "[PLACEHOLDER]",
+  "paraQuienEs": ["[PLACEHOLDER]"],
+  "beneficios": ["[PLACEHOLDER]"],
+  "contraindicaciones": ["[PLACEHOLDER]"],
+  "faq": []
+}

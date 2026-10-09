@@ -1,0 +1,129 @@
+---
+import Base from '../layouts/Base.astro';
+import SEO from '../components/SEO.astro';
+import { SITE, whatsappLink } from '../data/site';
+
+const titulo = `Roxana — masoterapeuta clínica y esteticista integral | ${SITE.nombre}`;
+const descripcion =
+  'Roxana, masoterapeuta clínica y esteticista integral en La Florida, Santiago. Conocé su formación y enfoque de trabajo en Jade Belleza y Spa.';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  mainEntity: {
+    '@type': 'Person',
+    name: 'Roxana',
+    jobTitle: 'Masoterapeuta clínica y esteticista integral',
+    worksFor: { '@id': `${SITE.url}/#negocio` },
+    knowsAbout: [
+      'Masoterapia clínica',
+      'Masaje descontracturante',
+      'Drenaje linfático',
+      'Estética integral',
+      'Limpieza facial',
+    ],
+  },
+};
+---
+
+<Base>
+  <SEO slot="head" titulo={titulo} descripcion={descripcion} schema={schema} />
+
+  <section class="max-w-6xl mx-auto px-6 pt-20 pb-16">
+    <nav aria-label="Migas de pan" class="text-sm text-tierra-500 mb-8">
+      <a href="/" class="hover:text-tierra-700 transition-colors">Inicio</a>
+      <span class="mx-2">/</span>
+      <span>Sobre Roxana</span>
+    </nav>
+
+    <div class="grid gap-14 lg:grid-cols-[1fr_1.2fr] items-start">
+      <div class="bg-tierra-200 aspect-[4/5] rounded-sm grid place-items-center">
+        <!-- PLACEHOLDER: foto real de Roxana — no usar stock -->
+        <p class="text-tierra-500 text-sm tracking-widest uppercase px-6 text-center">
+          [Imagen: retrato real de Roxana]
+        </p>
+      </div>
+
+      <div>
+        <p class="text-xs uppercase tracking-widest text-tierra-400 mb-5">
+          Quién te atiende
+        </p>
+        <h1 class="font-serif text-4xl md:text-5xl text-tierra-900 mb-8">Roxana</h1>
+        <p class="text-lg text-tierra-700 leading-relaxed mb-6">
+          Masoterapeuta clínica y esteticista integral, fundadora de Jade Belleza y Spa.
+        </p>
+        <p class="text-tierra-700 leading-relaxed mb-4">
+          [PLACEHOLDER: historia personal — por qué eligió esta profesión, qué la llevó
+          a abrir Jade. 2-3 párrafos, en primera persona o cercana.]
+        </p>
+        <p class="text-tierra-700 leading-relaxed">
+          [PLACEHOLDER: enfoque de trabajo — cómo aborda a cada clienta, qué la
+          distingue.]
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FORMACIÓN -->
+  <section class="bg-crema-100 py-[var(--spacing-seccion)]">
+    <div class="max-w-3xl mx-auto px-6">
+      <h2 class="font-serif text-3xl text-tierra-900 mb-4">Formación</h2>
+      <p class="text-sm text-tierra-500 mb-10">
+        Todos estos datos deben ser reales y verificables antes de publicar el sitio.
+      </p>
+
+      <dl class="divide-y divide-tierra-900/10">
+        <div class="py-6 grid gap-2 sm:grid-cols-[1fr_2fr]">
+          <dt class="font-serif text-lg text-tierra-900">Masoterapia clínica</dt>
+          <dd class="text-tierra-700">
+            [PLACEHOLDER: institución, tipo de certificación, año]
+          </dd>
+        </div>
+        <div class="py-6 grid gap-2 sm:grid-cols-[1fr_2fr]">
+          <dt class="font-serif text-lg text-tierra-900">Estética integral</dt>
+          <dd class="text-tierra-700">
+            [PLACEHOLDER: institución, tipo de certificación, año]
+          </dd>
+        </div>
+        <div class="py-6 grid gap-2 sm:grid-cols-[1fr_2fr]">
+          <dt class="font-serif text-lg text-tierra-900">Limpieza facial</dt>
+          <dd class="text-tierra-700">
+            [PLACEHOLDER: institución, tipo de certificación, año]
+          </dd>
+        </div>
+        <div class="py-6 grid gap-2 sm:grid-cols-[1fr_2fr]">
+          <dt class="font-serif text-lg text-tierra-900">Experiencia</dt>
+          <dd class="text-tierra-700">
+            [PLACEHOLDER: años de práctica y desde qué año]
+          </dd>
+        </div>
+        <div class="py-6 grid gap-2 sm:grid-cols-[1fr_2fr]">
+          <dt class="font-serif text-lg text-tierra-900">Especialidad</dt>
+          <dd class="text-tierra-700">
+            [PLACEHOLDER: área de mayor expertise]
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="max-w-6xl mx-auto px-6 py-[var(--spacing-seccion)]">
+    <div class="bg-tierra-900 rounded-sm px-8 py-16 md:px-16 text-center">
+      <h2 class="font-serif text-3xl md:text-4xl text-crema-50 mb-6">
+        Agendá con Roxana
+      </h2>
+      <p class="text-crema-200/80 leading-relaxed mb-10 max-w-xl mx-auto">
+        Escribinos por WhatsApp y coordinamos tu sesión.
+      </p>
+      <a
+        href={whatsappLink('Hola, me gustaría agendar una hora.')}
+        target="_blank"
+        rel="noopener"
+        class="inline-block bg-crema-50 text-tierra-900 px-10 py-4 rounded-full hover:bg-crema-200 transition-colors"
+      >
+        {SITE.telefono}
+      </a>
+    </div>
+  </section>
+</Base>

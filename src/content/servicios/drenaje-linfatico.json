@@ -1,0 +1,38 @@
+{
+  "nombre": "Masaje drenaje linfático",
+  "titulo": "Drenaje linfático en La Florida",
+  "descripcion": "Técnica suave y rítmica que favorece la circulación linfática y reduce la retención de líquidos. Se realiza por zona.",
+  "categoria": "masoterapia",
+  "slug": "drenaje-linfatico",
+  "prioridad": 2,
+  "activo": true,
+  "duracion": "[PLACEHOLDER: completar duración real por zona]",
+  "paraQuienEs": [
+    "[PLACEHOLDER: situaciones concretas — ej: retención de líquidos]",
+    "[PLACEHOLDER: ej: sensación de piernas cansadas o hinchadas]",
+    "[PLACEHOLDER: ej: post-operatorio con indicación médica]"
+  ],
+  "beneficios": [
+    "[PLACEHOLDER: beneficio concreto]",
+    "[PLACEHOLDER: beneficio concreto]"
+  ],
+  "contraindicaciones": [
+    "[PLACEHOLDER: ej: infecciones activas]",
+    "[PLACEHOLDER: ej: trombosis o problemas circulatorios sin indicación médica]",
+    "[PLACEHOLDER: ej: insuficiencia cardíaca o renal]"
+  ],
+  "faq": [
+    {
+      "pregunta": "¿Qué es el drenaje linfático?",
+      "respuesta": "[PLACEHOLDER: explicación de la técnica]"
+    },
+    {
+      "pregunta": "¿Cuántas sesiones necesito?",
+      "respuesta": "[PLACEHOLDER: número de sesiones y frecuencia]"
+    },
+    {
+      "pregunta": "¿Tiene contraindicaciones?",
+      "respuesta": "[PLACEHOLDER: resumen de contraindicaciones]"
+    }
+  ]
+}

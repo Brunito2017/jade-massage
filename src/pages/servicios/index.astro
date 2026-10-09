@@ -1,0 +1,96 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import SEO from '../../components/SEO.astro';
+import { SITE, whatsappLink } from '../../data/site';
+
+const titulo = 'Servicios de masoterapia y estética en La Florida | Jade Belleza y Spa';
+const descripcion =
+  'Masaje descontracturante, drenaje linfático, limpieza facial profunda y más. Conocé todos los servicios de Jade Belleza y Spa en La Florida, Santiago.';
+
+const servicios = (await getCollection('servicios')).sort(
+  (a, b) => a.data.prioridad - b.data.prioridad
+);
+const activos = servicios.filter((s) => s.data.activo);
+const inactivos = servicios.filter((s) => !s.data.activo);
+---
+
+<Base>
+  <SEO slot="head" titulo={titulo} descripcion={descripcion} />
+
+  <section class="max-w-6xl mx-auto px-6 pt-20 pb-16">
+    <nav aria-label="Migas de pan" class="text-sm text-tierra-500 mb-8">
+      <a href="/" class="hover:text-tierra-700 transition-colors">Inicio</a>
+      <span class="mx-2">/</span>
+      <span>Servicios</span>
+    </nav>
+    <h1 class="font-serif text-4xl md:text-6xl text-tierra-900 mb-6 max-w-3xl">
+      Servicios
+    </h1>
+    <p class="text-lg text-tierra-700 leading-relaxed max-w-2xl">
+      Terapias manuales y tratamientos estéticos en {SITE.comuna}. Cada sesión se adapta
+      a lo que tu cuerpo necesita.
+    </p>
+  </section>
+
+  <section class="max-w-6xl mx-auto px-6 pb-24">
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        activos.map((servicio) => (
+          <a
+            href={`/servicios/${servicio.data.slug}/`}
+            class="group block bg-crema-100 p-8 rounded-sm border border-tierra-900/8 hover:border-tierra-900/20 hover:shadow-sm transition-all"
+          >
+            <p class="text-xs uppercase tracking-widest text-tierra-400 mb-4">
+              {servicio.data.categoria === 'masoterapia' ? 'Masoterapia' : 'Estética'}
+            </p>
+            <h2 class="font-serif text-2xl text-tierra-900 mb-3 group-hover:text-tierra-600 transition-colors">
+              {servicio.data.nombre}
+            </h2>
+            <p class="text-sm text-tierra-700 leading-relaxed mb-6">
+              {servicio.data.descripcion}
+            </p>
+            <span class="text-sm text-tierra-600 underline underline-offset-4">
+              Ver más
+            </span>
+          </a>
+        ))
+      }
+    </div>
+
+    <div class="mt-16 pt-10 border-t border-tierra-900/10">
+      <p class="text-sm uppercase tracking-[0.2em] text-tierra-500 mb-6">
+        También disponible
+      </p>
+      <ul class="flex flex-wrap gap-x-8 gap-y-3">
+        {
+          inactivos.map((servicio) => (
+            <li class="font-serif text-xl text-tierra-600">{servicio.data.nombre}</li>
+          ))
+        }
+      </ul>
+      <p class="text-sm text-tierra-500 mt-6">
+        Consultá por estos y otros tratamientos por WhatsApp.
+      </p>
+    </div>
+  </section>
+
+  <section class="max-w-6xl mx-auto px-6 pb-24">
+    <div class="bg-tierra-900 rounded-sm px-8 py-16 md:px-16 text-center">
+      <h2 class="font-serif text-3xl md:text-4xl text-crema-50 mb-6">
+        ¿No sabés cuál elegir?
+      </h2>
+      <p class="text-crema-200/80 leading-relaxed mb-10 max-w-xl mx-auto">
+        Contanos qué molestias tenés y te orientamos hacia el tratamiento más adecuado.
+      </p>
+      <a
+        href={whatsappLink('Hola, quisiera orientación para elegir un servicio.')}
+        target="_blank"
+        rel="noopener"
+        class="inline-block bg-crema-50 text-tierra-900 px-10 py-4 rounded-full hover:bg-crema-200 transition-colors"
+      >
+        Consultar por WhatsApp
+      </a>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,105 @@
+---
+import Base from '../layouts/Base.astro';
+import SEO from '../components/SEO.astro';
+import { SITE, whatsappLink } from '../data/site';
+
+const titulo = `Contacto | ${SITE.nombre}`;
+const descripcion =
+  'Contactá a Jade Belleza y Spa en La Florida, Santiago. Agendá tu hora por WhatsApp, masoterapia clínica y estética integral.';
+---
+
+<Base>
+  <SEO slot="head" titulo={titulo} descripcion={descripcion} />
+
+  <section class="max-w-6xl mx-auto px-6 pt-20 pb-16">
+    <nav aria-label="Migas de pan" class="text-sm text-tierra-500 mb-8">
+      <a href="/" class="hover:text-tierra-700 transition-colors">Inicio</a>
+      <span class="mx-2">/</span>
+      <span>Contacto</span>
+    </nav>
+    <h1 class="font-serif text-4xl md:text-6xl text-tierra-900 mb-6">Contacto</h1>
+    <p class="text-lg text-tierra-700 leading-relaxed max-w-2xl">
+      Agendá tu hora o resolvé tus dudas por WhatsApp.
+    </p>
+  </section>
+
+  <section class="max-w-6xl mx-auto px-6 pb-24">
+    <div class="grid gap-8 md:grid-cols-2">
+      <a
+        href={whatsappLink('Hola, me gustaría agendar una hora.')}
+        target="_blank"
+        rel="noopener"
+        class="group block bg-tierra-900 text-crema-50 p-10 rounded-sm hover:bg-tierra-800 transition-colors"
+      >
+        <p class="text-xs uppercase tracking-widest text-crema-200/50 mb-5">
+          Canal principal
+        </p>
+        <p class="font-serif text-3xl mb-4">WhatsApp</p>
+        <p class="text-crema-200/80 mb-8">{SITE.telefono}</p>
+        <span class="text-sm underline underline-offset-4">Escribir ahora</span>
+      </a>
+
+      <div class="bg-crema-100 p-10 rounded-sm border border-tierra-900/8">
+        <p class="text-xs uppercase tracking-widest text-tierra-400 mb-5">
+          Ubicación
+        </p>
+        <p class="font-serif text-3xl text-tierra-900 mb-4">{SITE.comuna}</p>
+        <p class="text-tierra-700 leading-relaxed mb-8">
+          {SITE.region}, Chile
+        </p>
+        <p class="text-sm text-tierra-500 leading-relaxed">
+          La dirección exacta se entrega al confirmar tu hora.
+        </p>
+      </div>
+
+      <div class="bg-crema-100 p-10 rounded-sm border border-tierra-900/8">
+        <p class="text-xs uppercase tracking-widest text-tierra-400 mb-5">
+          Instagram
+        </p>
+        <p class="font-serif text-3xl text-tierra-900 mb-4">@estetica._jade</p>
+        <a
+          href={SITE.instagram}
+          target="_blank"
+          rel="noopener"
+          class="text-sm text-tierra-600 underline underline-offset-4"
+        >
+          Ver perfil
+        </a>
+      </div>
+
+      <div class="bg-crema-100 p-10 rounded-sm border border-tierra-900/8">
+        <p class="text-xs uppercase tracking-widest text-tierra-400 mb-5">
+          Horarios
+        </p>
+        <p class="font-serif text-3xl text-tierra-900 mb-4">
+          [PLACEHOLDER]
+        </p>
+        <p class="text-sm text-tierra-500 leading-relaxed">
+          Confirmar horarios de atención con Roxana.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="max-w-6xl mx-auto px-6 pb-24">
+    <div class="bg-crema-100 p-10 md:p-14 rounded-sm border border-tierra-900/8 max-w-2xl">
+      <h2 class="font-serif text-2xl text-tierra-900 mb-6">
+        Antes de escribir
+      </h2>
+      <ul class="space-y-4 text-tierra-700 leading-relaxed">
+        <li class="flex gap-4">
+          <span class="text-tierra-400 mt-1" aria-hidden="true">—</span>
+          <span>Contanos qué molestia tenés o qué tratamiento te interesa.</span>
+        </li>
+        <li class="flex gap-4">
+          <span class="text-tierra-400 mt-1" aria-hidden="true">—</span>
+          <span>Indicanos qué días y horarios te acomodan.</span>
+        </li>
+        <li class="flex gap-4">
+          <span class="text-tierra-400 mt-1" aria-hidden="true">—</span>
+          <span>Si tenés alguna condición de salud relevante, mencionala.</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+</Base>

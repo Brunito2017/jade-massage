@@ -1,0 +1,26 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='1920' height='1080' viewBox='0 0 1920 1080' preserveAspectRatio='xMidYMid slice'>
+  <defs>
+    <linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
+      <stop offset='0%' stop-color='#4a382c'/>
+      <stop offset='45%' stop-color='#6b5342'/>
+      <stop offset='100%' stop-color='#3a2c22'/>
+    </linearGradient>
+    <radialGradient id='v' cx='62%' cy='38%' r='62%'>
+      <stop offset='0%' stop-color='#c9a882' stop-opacity='0.55'/>
+      <stop offset='55%' stop-color='#8a6d52' stop-opacity='0.15'/>
+      <stop offset='100%' stop-color='#2a1f18' stop-opacity='0'/>
+    </radialGradient>
+    <radialGradient id='v2' cx='22%' cy='78%' r='48%'>
+      <stop offset='0%' stop-color='#e8dcc8' stop-opacity='0.18'/>
+      <stop offset='100%' stop-color='#2a1f18' stop-opacity='0'/>
+    </radialGradient>
+  </defs>
+  <rect width='1920' height='1080' fill='url(#g)'/>
+  <rect width='1920' height='1080' fill='url(#v)'/>
+  <rect width='1920' height='1080' fill='url(#v2)'/>
+  <g opacity='0.07' fill='none' stroke='#f0e4d0' stroke-width='1.5'>
+    <path d='M0 760 Q 480 660 960 740 T 1920 700'/>
+    <path d='M0 820 Q 480 720 960 800 T 1920 760'/>
+    <path d='M0 880 Q 480 780 960 860 T 1920 820'/>
+  </g>
+</svg>
