@@ -1,6 +1,7 @@
 ---
 import { Font } from 'astro:assets';
 import '../styles/global.css';
+import Header from '../components/Header.astro';
 import { SITE, whatsappLink } from '../data/site';
 
 interface Props {
@@ -30,42 +31,7 @@ const { heroTransparente = false } = Astro.props;
       Saltar al contenido
     </a>
 
-    <header
-      id="site-header"
-      data-transparente={heroTransparente ? 'true' : undefined}
-      class:list={[
-        'top-0 z-40 transition-colors duration-300',
-        // Transparente = flota por encima del hero, así la imagen llega al borde
-        // superior. Sólido = ocupa su espacio en el flujo, como cualquier header.
-        heroTransparente
-          ? 'fixed inset-x-0 bg-transparent border-b border-transparent'
-          : 'sticky bg-crema-50/85 backdrop-blur-sm border-b border-tierra-900/8',
-      ]}
-    >
-      <nav
-        class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between"
-        aria-label="Navegación principal"
-      >
-        <a href="/" class="site-logo font-serif text-2xl tracking-tight">
-          Jade<span class="site-logo__rest"> Belleza y Spa</span>
-        </a>
-
-        <ul class="hidden md:flex items-center gap-9 text-sm site-nav-link">
-          <li><a href="/servicios/" class="transition-colors">Servicios</a></li>
-          <li><a href="/sobre-roxana/" class="transition-colors">Sobre Roxana</a></li>
-          <li><a href="/contacto/" class="transition-colors">Contacto</a></li>
-        </ul>
-
-        <a
-          href={whatsappLink('Hola, me gustaría consultar por un servicio.')}
-          target="_blank"
-          rel="noopener"
-          class="text-sm bg-tierra-900 text-crema-50 px-5 py-2.5 rounded-full hover:bg-tierra-700 transition-colors"
-        >
-          Agendar
-        </a>
-      </nav>
-    </header>
+    <Header heroTransparente={heroTransparente} />
 
     <main id="contenido" class="flex-1">
       <slot />
@@ -115,19 +81,5 @@ const { heroTransparente = false } = Astro.props;
         </div>
       </div>
     </footer>
-
-    {
-      heroTransparente && (
-        <script is:inline>
-          const header = document.getElementById('site-header');
-          const marcar = () => {
-            if (window.scrollY > 40) header.setAttribute('data-scrolled', '');
-            else header.removeAttribute('data-scrolled');
-          };
-          marcar();
-          window.addEventListener('scroll', marcar, { passive: true });
-        </script>
-      )
-    }
   </body>
 </html>

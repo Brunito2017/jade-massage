@@ -82,55 +82,6 @@
 }
 
 /* ============================================================
-   HEADER — transparente sobre el hero, sólido al scrollear
-   ============================================================ */
-
-.site-logo,
-.site-logo__rest,
-.site-nav-link a {
-  color: var(--color-tierra-900);
-  transition: color 0.3s ease;
-}
-
-/* Sobre el hero: texto claro */
-#site-header[data-transparente='true']:not([data-scrolled]) {
-  /* El header queda por encima del velo del hero, así que necesita el suyo:
-     sin esto, el logo y el nav caen sobre la zona clara de la imagen. */
-  background: linear-gradient(
-    to bottom,
-    color-mix(in oklch, var(--color-tierra-950) 62%, transparent),
-    transparent
-  );
-}
-
-#site-header[data-transparente='true']:not([data-scrolled]) .site-logo,
-#site-header[data-transparente='true']:not([data-scrolled]) .site-logo__rest,
-#site-header[data-transparente='true']:not([data-scrolled]) .site-nav-link a {
-  color: var(--color-crema-50);
-}
-
-#site-header[data-transparente='true']:not([data-scrolled]) .site-logo,
-#site-header[data-transparente='true']:not([data-scrolled]) .site-nav-link a {
-  text-shadow:
-    0 1px 3px rgba(20, 14, 8, 0.9),
-    0 2px 12px rgba(20, 14, 8, 0.7);
-}
-
-#site-header[data-scrolled] {
-  background-color: color-mix(in oklch, var(--color-crema-50) 88%, transparent);
-  backdrop-filter: blur(8px);
-  border-bottom-color: color-mix(in oklch, var(--color-tierra-900) 8%, transparent);
-}
-
-.site-nav-link a:hover {
-  color: var(--color-tierra-600);
-}
-
-#site-header[data-transparente='true']:not([data-scrolled]) .site-nav-link a:hover {
-  color: var(--color-crema-200);
-}
-
-/* ============================================================
    PANTALLAS BAJAS — el hero tiene que entrar en una pantalla
    ============================================================ */
 

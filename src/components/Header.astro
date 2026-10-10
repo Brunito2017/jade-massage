@@ -1,0 +1,119 @@
+---
+import { whatsappLink } from '../data/site';
+
+/**
+ * Header del sitio. Se usa una sola vez, desde `Base.astro`.
+ *
+ * - Sólido (por defecto): ocupa su espacio en el flujo, fondo crema translúcido.
+ * - `heroTransparente`: flota fijo por encima del hero y se vuelve sólido al
+ *   scrollear (ver el script al final y los estilos de abajo).
+ */
+interface Props {
+  /** Header transparente sobre el hero, sólido al scrollear. */
+  heroTransparente?: boolean;
+}
+
+const { heroTransparente = false } = Astro.props;
+---
+
+<header
+  id="site-header"
+  data-transparente={heroTransparente ? 'true' : undefined}
+  class:list={[
+    'top-0 z-40 transition-colors duration-300',
+    // Transparente = flota por encima del hero, así la imagen llega al borde
+    // superior. Sólido = ocupa su espacio en el flujo, como cualquier header.
+    heroTransparente
+      ? 'fixed inset-x-0 bg-transparent border-b border-transparent'
+      : 'sticky bg-crema-50/85 backdrop-blur-sm border-b border-tierra-900/8',
+  ]}
+>
+  <nav
+    class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between"
+    aria-label="Navegación principal"
+  >
+    <a href="/" class="site-logo font-serif text-2xl tracking-tight">
+      Jade<span class="site-logo__rest"> Belleza y Spa</span>
+    </a>
+
+    <ul class="hidden md:flex items-center gap-9 text-sm site-nav-link">
+      <li><a href="/servicios/" class="transition-colors">Servicios</a></li>
+      <li><a href="/sobre-roxana/" class="transition-colors">Sobre Roxana</a></li>
+      <li><a href="/contacto/" class="transition-colors">Contacto</a></li>
+    </ul>
+
+    <a
+      href={whatsappLink('Hola, me gustaría consultar por un servicio.')}
+      target="_blank"
+      rel="noopener"
+      class="text-sm bg-tierra-900 text-crema-50 px-5 py-2.5 rounded-full hover:bg-tierra-700 transition-colors"
+    >
+      Agendar
+    </a>
+  </nav>
+</header>
+
+{
+  heroTransparente && (
+    <script is:inline>
+      const header = document.getElementById('site-header');
+      const marcar = () => {
+        if (window.scrollY > 40) header.setAttribute('data-scrolled', '');
+        else header.removeAttribute('data-scrolled');
+      };
+      marcar();
+      window.addEventListener('scroll', marcar, { passive: true });
+    </script>
+  )
+}
+
+<style>
+  /* ============================================================
+     HEADER — transparente sobre el hero, sólido al scrollear
+     ============================================================ */
+
+  .site-logo,
+  .site-logo__rest,
+  .site-nav-link a {
+    color: var(--color-tierra-900);
+    transition: color 0.3s ease;
+  }
+
+  /* Sobre el hero: texto claro */
+  #site-header[data-transparente='true']:not([data-scrolled]) {
+    /* El header queda por encima del velo del hero, así que necesita el suyo:
+       sin esto, el logo y el nav caen sobre la zona clara de la imagen. */
+    background: linear-gradient(
+      to bottom,
+      color-mix(in oklch, var(--color-tierra-950) 62%, transparent),
+      transparent
+    );
+  }
+
+  #site-header[data-transparente='true']:not([data-scrolled]) .site-logo,
+  #site-header[data-transparente='true']:not([data-scrolled]) .site-logo__rest,
+  #site-header[data-transparente='true']:not([data-scrolled]) .site-nav-link a {
+    color: var(--color-crema-50);
+  }
+
+  #site-header[data-transparente='true']:not([data-scrolled]) .site-logo,
+  #site-header[data-transparente='true']:not([data-scrolled]) .site-nav-link a {
+    text-shadow:
+      0 1px 3px rgba(20, 14, 8, 0.9),
+      0 2px 12px rgba(20, 14, 8, 0.7);
+  }
+
+  #site-header[data-scrolled] {
+    background-color: color-mix(in oklch, var(--color-crema-50) 88%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom-color: color-mix(in oklch, var(--color-tierra-900) 8%, transparent);
+  }
+
+  .site-nav-link a:hover {
+    color: var(--color-tierra-600);
+  }
+
+  #site-header[data-transparente='true']:not([data-scrolled]) .site-nav-link a:hover {
+    color: var(--color-crema-200);
+  }
+</style>
