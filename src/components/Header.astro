@@ -1,5 +1,5 @@
 ---
-import { whatsappLink } from '../data/site';
+import { SITE, whatsappLink } from '../data/site';
 
 /**
  * Header del sitio. Se usa una sola vez, desde `Base.astro`.
@@ -14,6 +14,26 @@ interface Props {
 }
 
 const { heroTransparente = false } = Astro.props;
+
+/**
+ * El wordmark partido en letras: la marca se "escribe" sola al cargar (ver
+ * `.site-logo__letra`). Se corta con las dos mitades que ya tenía el logo,
+ * "Jade" y el resto con el color de apoyo (.site-logo__rest).
+ *
+ * El índice de letra es global y no por mitad: si arrancara de cero en cada
+ * palabra, el escalón se reiniciaría y se verían dos animaciones pegadas.
+ */
+let iLetra = 0;
+const palabras = SITE.nombre.split(' ');
+const partes = palabras.map((palabra, i) => ({
+  apoyo: i > 0,
+  // El espacio viaja dentro de una letra propia: un <span> que solo contiene
+  // un espacio colapsa a cero y las palabras quedarían pegadas.
+  letras: [...(i < palabras.length - 1 ? `${palabra} ` : palabra)].map((char) => ({
+    char,
+    i: iLetra++,
+  })),
+}));
 ---
 
 <header
@@ -29,26 +49,42 @@ const { heroTransparente = false } = Astro.props;
   ]}
 >
   <nav
-    class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between"
+    class="relative max-w-6xl mx-auto px-6 h-20 flex items-center justify-between"
     aria-label="Navegación principal"
   >
-    <a href="/" class="site-logo font-serif text-2xl tracking-tight">
-      Jade<span class="site-logo__rest"> Belleza y Spa</span>
+    <a href="/" class="site-logo absolute left-1/2 -translate-x-1/2 font-serif text-2xl tracking-tight">
+      {/* Las letras van pegadas, sin aire ni saltos entre los <span>: con
+          `white-space: pre` (para que el espacio entre palabras no colapse)
+          cualquier sangría del template se renderiza como un hueco. */}
+      {partes.map(({ apoyo, letras }) => (
+        <span class:list={['site-logo__parte', apoyo && 'site-logo__rest']}>{letras.map((letra) => <span class="site-logo__letra" style={`--i:${letra.i}`}>{letra.char}</span>)}</span>
+      ))}
     </a>
 
-    <ul class="hidden md:flex items-center gap-9 text-sm site-nav-link">
+    <ul class="hidden md:flex items-center gap-9 text-sm site-nav-link site-nav-links">
       <li><a href="/servicios/" class="transition-colors">Servicios</a></li>
       <li><a href="/sobre-roxana/" class="transition-colors">Sobre Roxana</a></li>
       <li><a href="/contacto/" class="transition-colors">Contacto</a></li>
     </ul>
 
+    {/* Placeholder: la X ocupa el lugar del ícono que va acá más adelante. El
+        enlace sigue siendo el de WhatsApp, y por eso lleva aria-label — sin
+        texto visible, es lo único que lo nombra. */}
     <a
       href={whatsappLink('Hola, me gustaría consultar por un servicio.')}
       target="_blank"
       rel="noopener"
-      class="text-sm bg-tierra-900 text-crema-50 px-5 py-2.5 rounded-full hover:bg-tierra-700 transition-colors"
+      aria-label="Agendar por WhatsApp"
+      class="site-cta ml-auto grid size-11 place-items-center rounded-full bg-tierra-900 text-crema-50 hover:bg-tierra-700 transition-colors"
     >
-      Agendar
+      <svg class="size-4" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+        <path
+          d="M3.5 3.5l9 9M12.5 3.5l-9 9"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+        />
+      </svg>
     </a>
   </nav>
 </header>
@@ -58,8 +94,13 @@ const { heroTransparente = false } = Astro.props;
     <script is:inline>
       const header = document.getElementById('site-header');
       const marcar = () => {
-        if (window.scrollY > 40) header.setAttribute('data-scrolled', '');
-        else header.removeAttribute('data-scrolled');
+        if (window.scrollY > 40) {
+          header.setAttribute('data-scrolled', '');
+          header.setAttribute('data-revealed', '');
+        } else {
+          header.removeAttribute('data-scrolled');
+          // OJO: data-revealed NO se borra aquí -> la animación ocurre una sola vez
+        }
       };
       marcar();
       window.addEventListener('scroll', marcar, { passive: true });
@@ -68,6 +109,30 @@ const { heroTransparente = false } = Astro.props;
 }
 
 <style>
+  /* ============================================================
+     WORDMARK — la marca se escribe sola
+     Mismo gesto que la entrada del hero (HeroTexto): sube y aparece con la
+     curva y el tempo del sitio, pero acá letra por letra, que es lo que le da
+     el aire de marca. Termina de asentarse (≈1,7s) junto con el título del
+     hero, así los dos textos llegan juntos.
+     ============================================================ */
+
+  .site-logo__letra {
+    display: inline-block;
+    /* Sin esto, un <span> que solo contiene el espacio entre palabras colapsa
+       a cero y el wordmark queda como una sola palabra. */
+    white-space: pre;
+    animation: logo-letra 0.9s var(--ease-suave) backwards;
+    animation-delay: calc(0.35s + var(--i) * 26ms);
+  }
+
+  @keyframes logo-letra {
+    from {
+      opacity: 0;
+      translate: 0 0.55em;
+    }
+  }
+
   /* ============================================================
      HEADER — transparente sobre el hero, sólido al scrollear
      ============================================================ */
@@ -115,5 +180,53 @@ const { heroTransparente = false } = Astro.props;
 
   #site-header[data-transparente='true']:not([data-scrolled]) .site-nav-link a:hover {
     color: var(--color-crema-200);
+  }
+
+  /* ============================================================
+     REVELADO DEL NAV + CTA
+     El estado oculto se aplica SOLO al header transparente. En el
+     header sólido (páginas internas) nav y CTA se ven siempre.
+     ============================================================ */
+
+  /* Oculto por defecto: menú (izquierda) y CTA (derecha) */
+  #site-header[data-transparente='true'] .site-nav-links,
+  #site-header[data-transparente='true'] .site-cta {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    pointer-events: none;
+    transition:
+      opacity 0.4s ease,
+      transform 0.4s ease,
+      visibility 0s 0.4s; /* se vuelve invisible AL FINAL de la animación */
+  }
+
+  /* Revelado: se fija una vez el header tiene data-revealed */
+  #site-header[data-transparente='true'][data-revealed] .site-nav-links,
+  #site-header[data-transparente='true'][data-revealed] .site-cta {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    pointer-events: auto;
+    transition:
+      opacity 0.5s ease,
+      transform 0.5s ease,
+      visibility 0s; /* reaparece inmediatamente */
+  }
+
+  /* Stagger: el CTA entra un pelín después que el menú */
+  #site-header[data-transparente='true'][data-revealed] .site-cta {
+    transition-delay: 0.12s;
+  }
+
+  /* Accesibilidad: misma especificidad que el revelado para poder anularlo */
+  @media (prefers-reduced-motion: reduce) {
+    #site-header[data-transparente='true'] .site-nav-links,
+    #site-header[data-transparente='true'] .site-cta,
+    #site-header[data-transparente='true'][data-revealed] .site-nav-links,
+    #site-header[data-transparente='true'][data-revealed] .site-cta {
+      transition: none;
+      transform: none;
+    }
   }
 </style>
