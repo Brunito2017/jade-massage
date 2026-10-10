@@ -140,11 +140,15 @@ const config = VARIANTES_HERO[variante];
     width: 100%;
   }
 
-  /* Reserva el alto de la onda (--onda-alto, global.css). El hero es un grid
-     con place-items: center, así que este padding encoge el área útil y el
-     texto se centra por encima de la curva en vez de quedar debajo. */
+  /* Reserva la parte de la onda que tapa la foto (--onda-relleno). El hero es
+     un grid con place-items: center, así que este padding encoge el área útil
+     hasta el borde de la curva: el texto queda centrado en la foto visible y
+     nunca baja a la crema.
+     Se descuenta solo el relleno y no --onda-alto entero porque el tramo por
+     encima de la cresta sigue siendo foto: reservándolo todo, el texto se
+     centraba sobre un área más chica que la foto y quedaba ~60px arriba. */
   .hero--con-onda {
-    padding-bottom: var(--onda-alto);
+    padding-bottom: calc(var(--onda-alto) * var(--onda-relleno));
   }
 
   /* ---------- completo: imagen a sangre, texto centrado  hola felipe ---------- */
@@ -243,9 +247,11 @@ const config = VARIANTES_HERO[variante];
 
   /* ---------- cierre inferior: onda + franja que la onda abre ---------- */
 
-  /* Caja que ocupa la franja reservada por .hero--con-onda. La onda se ancla
+  /* Caja que ocupa la franja de la onda, al pie del hero. La onda se ancla
      sola contra su borde inferior y mide lo mismo, así que la llena entera.
-     El contenido del slot se apoya abajo, sobre la parte sólida de la crema. */
+     El contenido del slot se apoya abajo, sobre la parte sólida de la crema.
+     Es más alta que la reserva de .hero--con-onda: esa reserva es solo el
+     relleno, porque por encima de la cresta la foto se sigue viendo. */
   .hero__cierre {
     position: absolute;
     inset: auto 0 0 0;

@@ -11,24 +11,26 @@
  * ya lo es) y `overflow: hidden` si la onda debe quedar recortada.
  *
  * PARA AJUSTARLA:
- * - Alto (cuánto sube la cresta): el token `--onda-alto` en global.css. Es el
- *   único control de tamaño — Hero reserva ese mismo espacio para el texto, así
- *   que las dos piezas se mueven juntas. El relleno siempre baja hasta el borde
- *   de la sección.
+ * - Alto (cuánto ocupa en la pantalla): el token `--onda-alto` en global.css.
+ *   Es el único control de tamaño — Hero reserva ese mismo espacio para el
+ *   texto, así que las dos piezas se mueven juntas. El relleno siempre baja
+ *   hasta el borde de la sección.
  * - Forma de la curva: el atributo `d` del <path>. El viewBox mide 1440 x 200;
  *   `y` chico = cresta más arriba, `y=200` = borde inferior de la sección.
- *   Es **una sola ondulación larga** de punta a punta, como la referencia: la
- *   cresta va plana entre x=620 y x=900 (el centro de la pantalla) y la curva
- *   entra y sale en horizontal por los bordes. Agregar puntos de control crea
- *   más lomas — y más lomas del mismo alto se leen como montañas más chicas.
- *   Amplitud actual: cresta en y=52, valle en y=86 (34 unidades).
- *   Achicar esa diferencia = onda más suave; agrandarla = más marcada.
- *   El valle marca la parte sólida de la crema: con y=86 queda el 57% de
- *   abajo del elemento, que es el alto con que cuenta la franja del hero.
- *   Bajarlo recorta ese espacio; subirlo se lo da.
- *   La cresta es lo que fija a qué altura aparece la onda en la pantalla:
- *   con y=52 la crema empieza al 70% del alto. Subirla en units = onda más
- *   arriba; bajarla = más abajo.
+ *   Es **una sola ondulación larga** de punta a punta, como la referencia:
+ *   entra y sale en horizontal por los bordes y la cresta roza el centro de la
+ *   pantalla. Agregar puntos de control crea más lomas — y más lomas del mismo
+ *   alto se leen como montañas más chicas.
+ *   Hoy es una ondulación suave: va de y=80 (cresta, hacia x=980) a y=86
+ *   (valle, contra el borde izquierdo). Achicar esa diferencia = más plana;
+ *   agrandarla = más marcada.
+ * - `y` fija dos cosas a la vez, y las dos se actualizan a mano:
+ *   1. A qué altura aparece la crema en pantalla: con y≈84, al 42% del
+ *      elemento. Subirla en units = onda más arriba; bajarla = más abajo.
+ *   2. Qué proporción de ese alto tapa la foto. Eso es `--onda-relleno` en
+ *      global.css ((200 − y) / 200 = 0.58), y es lo que Hero descuenta para
+ *      centrar el texto sobre la foto visible. Si la curva se mueve, hay que
+ *      moverlo con ella: si no, el texto del hero queda descentrado.
  * - No tocar `bottom` en `.onda`: si se levanta, queda una franja sin rellenar.
  * - La onda va en `z-index: 3`. Si algo tiene que quedar encima de su relleno
  *   (la franja del hero, por ejemplo), ese algo necesita un z-index mayor.
@@ -85,9 +87,9 @@ const { color = 'var(--color-crema-50)', voltear = false } = Astro.props;
     }
   }
 
-  /* El alto sale del token --onda-alto (global.css), que es el mismo que usa
-     Hero para reservar el espacio del texto. Subirlo en un solo lugar mueve
-     las dos cosas juntas. */
+  /* El alto sale del token --onda-alto (global.css), que es el presupuesto del
+     que también sale la reserva del texto en el hero. Subirlo en un solo lugar
+     mueve las dos cosas juntas. */
   .onda svg {
     display: block;
     width: 100%;

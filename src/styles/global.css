@@ -36,6 +36,18 @@
      delgada que la curva pasaba por encima de los íconos. */
   --onda-alto: clamp(9rem, 42vh, 20rem);
 
+  /* Fracción de --onda-alto que la crema tapa de verdad. Por encima de la
+     cresta la foto se sigue viendo, así que ese tramo no es espacio ocupado:
+     Hero reserva solo esta parte, y así el texto queda centrado sobre la foto
+     visible y no sobre un área más chica.
+     Va sin unidad porque se multiplica por --onda-alto (`calc` no puede
+     multiplicar un largo por un porcentaje) — un `58%` acá deja el padding
+     inválido y el hero se queda sin reserva.
+     Sale de la `d` de DivisorOnda: la curva vive en y≈84 de un viewBox de 200,
+     o sea que el relleno arranca al 42% del alto. Si se mueve la curva, este
+     número se mueve con ella — los dos describen la misma geometría. */
+  --onda-relleno: 0.58;
+
   /* Movimiento — una sola curva y un solo tiempo para todo el sitio.
      La curva frena muy al final y no rebota: es lo que hace que las entradas
      se lean como calma y no como rebote. Cambiar acá mueve todo junto. */
