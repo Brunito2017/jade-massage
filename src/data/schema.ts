@@ -1,9 +1,9 @@
 import { SITE } from '../data/site';
 
 /**
- * Negocio local. `address` es obligatorio para el rich result, pero no se
- * publica la calle hasta resolver la verificación con el arrendatario.
- * Mientras tanto se declara la comuna como área de servicio.
+ * Negocio local. La dirección sale de `SITE.direccion`, que refleja el Google
+ * Business Profile: el `address` es obligatorio para el rich result de negocio
+ * local y para que Google asocie el sitio a una ubicación física.
  */
 export function negocioLocal() {
   return {
@@ -17,6 +17,19 @@ export function negocioLocal() {
     image: `${SITE.url}/og-default.jpg`,
     priceRange: '$$',
     currenciesAccepted: 'CLP',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: SITE.direccion.calle,
+      addressLocality: SITE.direccion.comuna,
+      addressRegion: SITE.direccion.region,
+      postalCode: SITE.direccion.codigoPostal,
+      addressCountry: SITE.direccion.pais,
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: SITE.geo.latitud,
+      longitude: SITE.geo.longitud,
+    },
     areaServed: {
       '@type': 'City',
       name: SITE.comuna,

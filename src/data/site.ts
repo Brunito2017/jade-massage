@@ -11,6 +11,30 @@ export const SITE = {
   region: 'Región Metropolitana',
   pais: 'CL',
   idioma: 'es-CL',
+  /**
+   * Dirección del local, tal como figura en el Google Business Profile.
+   * Se copia carácter por carácter desde ahí a propósito: la consistencia NAP
+   * entre el sitio y el perfil es un factor de posicionamiento local, y una
+   * tilde o un "Local" escrito distinto le resta confianza a Google sobre si
+   * son el mismo negocio.
+   */
+  direccion: {
+    calle: 'Walker Martínez 3577, casa F',
+    comuna: 'La Florida',
+    region: 'Región Metropolitana',
+    codigoPostal: '8240000',
+    pais: 'CL',
+  },
+  /**
+   * Coordenadas del pin exacto, copiadas del Google Business Profile.
+   * Son la fuente autoritativa de la ubicación: no reemplazar por un
+   * geocoding de la dirección (Walker Martínez es una avenida larga y el
+   * geocoder devuelve el eje de la calle, no el número 3577).
+   */
+  geo: {
+    latitud: -33.52239698986214,
+    longitud: -70.55833123558241,
+  },
 } as const;
 
 export const CATEGORIAS = {
