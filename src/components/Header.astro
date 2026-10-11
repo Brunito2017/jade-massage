@@ -52,14 +52,40 @@ const partes = palabras.map((palabra, i) => ({
     class="relative max-w-6xl mx-auto px-6 h-20 flex items-center justify-between"
     aria-label="Navegación principal"
   >
-    <a href="/" class="site-logo absolute left-1/2 -translate-x-1/2 font-serif text-2xl tracking-tight">
+    <a
+      href="/"
+      class="site-logo absolute left-1/2 -translate-x-1/2 flex flex-col items-center font-serif text-2xl tracking-tight"
+    >
       {/* Las letras van pegadas, sin aire ni saltos entre los <span>: con
           `white-space: pre` (para que el espacio entre palabras no colapse)
           cualquier sangría del template se renderiza como un hueco. */}
-      {partes.map(({ apoyo, letras }) => (
-        <span class:list={['site-logo__parte', apoyo && 'site-logo__rest']}>{letras.map((letra) => <span class="site-logo__letra" style={`--i:${letra.i}`}>{letra.char}</span>)}</span>
-      ))}
+      <span class="site-logo__wordmark">
+        {partes.map(({ apoyo, letras }) => (
+          <span class:list={['site-logo__parte', apoyo && 'site-logo__rest']}>{letras.map((letra) => <span class="site-logo__letra" style={`--i:${letra.i}`}>{letra.char}</span>)}</span>
+        ))}
+      </span>
+      {/* Subrayado decorativo: marca el ancho real del wordmark. Entra recién
+          cuando termina de escribirse la última letra (ver .site-logo__subrayado). */}
+      <span class="site-logo__subrayado" aria-hidden="true"></span>
     </a>
+
+    {/* Hamburguesa: solo en móvil. En desktop el <ul> de links la reemplaza. */}
+    <button
+      type="button"
+      aria-label="Abrir menú"
+      aria-controls="menu-principal"
+      aria-expanded="false"
+      class="site-menu md:hidden grid size-11 place-items-center rounded-full text-tierra-900 hover:bg-tierra-900/8 transition-colors"
+    >
+      <svg class="size-5" viewBox="0 0 20 20" fill="none" aria-hidden="true" focusable="false">
+        <path
+          d="M2.5 5h15M2.5 10h15M2.5 15h15"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+        />
+      </svg>
+    </button>
 
     <ul class="hidden md:flex items-center gap-9 text-sm site-nav-link site-nav-links">
       <li><a href="/servicios/" class="transition-colors">Servicios</a></li>
@@ -67,23 +93,19 @@ const partes = palabras.map((palabra, i) => ({
       <li><a href="/contacto/" class="transition-colors">Contacto</a></li>
     </ul>
 
-    {/* Placeholder: la X ocupa el lugar del ícono que va acá más adelante. El
-        enlace sigue siendo el de WhatsApp, y por eso lleva aria-label — sin
-        texto visible, es lo único que lo nombra. */}
+    {/* El enlace es de WhatsApp y por eso lleva aria-label: sin texto visible,
+        es lo único que lo nombra. */}
     <a
       href={whatsappLink('Hola, me gustaría consultar por un servicio.')}
       target="_blank"
       rel="noopener"
       aria-label="Agendar por WhatsApp"
-      class="site-cta ml-auto grid size-11 place-items-center rounded-full bg-tierra-900 text-crema-50 hover:bg-tierra-700 transition-colors"
+      class="site-cta ml-auto grid size-11 place-items-center rounded-full text-tierra-900 hover:bg-tierra-900/8 transition-colors"
     >
       <svg class="size-4" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
-        <path
-          d="M3.5 3.5l9 9M12.5 3.5l-9 9"
-          stroke="currentColor"
-          stroke-width="1.5"
-          stroke-linecap="round"
-        />
+        <rect x="1.75" y="3.25" width="12.5" height="11" rx="1.5" stroke="currentColor" stroke-width="1.4" />
+        <path d="M1.75 6.5h12.5" stroke="currentColor" stroke-width="1.4" />
+        <path d="M5 1.6v2.8M11 1.6v2.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
       </svg>
     </a>
   </nav>
@@ -133,26 +155,81 @@ const partes = palabras.map((palabra, i) => ({
     }
   }
 
+  /* Sin esto, `items-center` del <a> padre estiraría cada span a lo alto del
+     flex: el wordmark y el subrayado quedarían como bloques y el subrayado
+     caería justo debajo del texto, sin aire. */
+  .site-logo__wordmark,
+  .site-logo__subrayado {
+    flex: 0 0 auto;
+  }
+
+  .site-logo__subrayado {
+    /* Una línea recta, fina y del ancho exacto del wordmark: el gesto más
+       discreto que puede hacer un subrayado. */
+    width: 100%;
+    height: 1px;
+    margin-top: 0.2rem;
+    transform-origin: center;
+    clip-path: none;
+    /* El subrayado NO entra con el wordmark: nace oculto y solo se dibuja
+       cuando el header revela el resto de la navegación (ver `data-revealed`
+       más abajo). Si entrara al cargar, se gastaría sobre el hero, cuando el
+       header todavía no tiene nada que subrayar. */
+    scale: 0 1;
+    opacity: 0;
+    transition: background-color 0.3s ease;
+  }
+
+  /* Se dibuja desde el centro hacia los dos lados: el ancho pasa de 0 a 1 con
+     `transform-origin: center`, así que crece hacia ambos lados a la vez.
+     En el header sólido no hay scroll que revele nada, así que arranca solo. */
+  #site-header:not([data-transparente='true']) .site-logo__subrayado,
+  #site-header[data-revealed] .site-logo__subrayado {
+    animation: logo-subrayado 3s var(--ease-suave) forwards;
+  }
+
+  @keyframes logo-subrayado {
+    from {
+      opacity: 0;
+      scale: 0 1;
+    }
+    /* El ancho llega a la mitad del recorrido y el resto del tiempo es solo
+       asentamiento: con la curva del sitio, que frena muy al final, el
+       crecimiento se ve casi todo al principio. */
+    50% {
+      opacity: 1;
+    }
+    /* El `to` es obligatorio: sin él la animación no tiene estado final y un
+       `forwards` congela el subrayado en el último keyframe declarado (acá,
+       el del 50%), o sea invisible para siempre. */
+    to {
+      opacity: 1;
+      scale: none;
+    }
+  }
+
   /* ============================================================
      HEADER — transparente sobre el hero, sólido al scrollear
      ============================================================ */
 
   .site-logo,
   .site-logo__rest,
+  .site-logo__subrayado,
   .site-nav-link a {
     color: var(--color-tierra-900);
     transition: color 0.3s ease;
   }
 
-  /* Sobre el hero: texto claro */
-  #site-header[data-transparente='true']:not([data-scrolled]) {
-    /* El header queda por encima del velo del hero, así que necesita el suyo:
-       sin esto, el logo y el nav caen sobre la zona clara de la imagen. */
-    background: linear-gradient(
-      to bottom,
-      color-mix(in oklch, var(--color-tierra-950) 62%, transparent),
-      transparent
-    );
+  /* La tinta se hereda del color del wordmark, así el subrayado acompaña el
+     cambio a crema sobre el hero sin una regla propia por estado. */
+  .site-logo__subrayado {
+    background-color: color-mix(in oklch, currentColor 55%, transparent);
+  }
+
+  #site-header[data-transparente='true']:not([data-scrolled]) .site-logo,
+  #site-header[data-transparente='true']:not([data-scrolled]) .site-logo__rest,
+  #site-header[data-transparente='true']:not([data-scrolled]) .site-nav-link a {
+    color: var(--color-crema-50);
   }
 
   #site-header[data-transparente='true']:not([data-scrolled]) .site-logo,
@@ -189,6 +266,7 @@ const partes = palabras.map((palabra, i) => ({
      ============================================================ */
 
   /* Oculto por defecto: menú (izquierda) y CTA (derecha) */
+  #site-header[data-transparente='true'] .site-menu,
   #site-header[data-transparente='true'] .site-nav-links,
   #site-header[data-transparente='true'] .site-cta {
     opacity: 0;
@@ -202,6 +280,7 @@ const partes = palabras.map((palabra, i) => ({
   }
 
   /* Revelado: se fija una vez el header tiene data-revealed */
+  #site-header[data-transparente='true'][data-revealed] .site-menu,
   #site-header[data-transparente='true'][data-revealed] .site-nav-links,
   #site-header[data-transparente='true'][data-revealed] .site-cta {
     opacity: 1;
@@ -221,8 +300,25 @@ const partes = palabras.map((palabra, i) => ({
 
   /* Accesibilidad: misma especificidad que el revelado para poder anularlo */
   @media (prefers-reduced-motion: reduce) {
+    /* Sin animación de letras no hay nada que esperar: si el retraso siguiera
+       calculándose, el subrayado tardaría ~1,4s en aparecer sobre un header ya
+       quieto. */
+    .site-logo__letra,
+    .site-logo__subrayado {
+      animation: none;
+    }
+
+    /* Sin animación, el subrayado se quedaría en su estado oculto (scale 0):
+       el estado final de la animación pasa a ser el base. */
+    .site-logo__subrayado {
+      scale: none;
+      opacity: 1;
+    }
+
+    #site-header[data-transparente='true'] .site-menu,
     #site-header[data-transparente='true'] .site-nav-links,
     #site-header[data-transparente='true'] .site-cta,
+    #site-header[data-transparente='true'][data-revealed] .site-menu,
     #site-header[data-transparente='true'][data-revealed] .site-nav-links,
     #site-header[data-transparente='true'][data-revealed] .site-cta {
       transition: none;
