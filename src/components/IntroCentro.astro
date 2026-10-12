@@ -1,0 +1,423 @@
+---
+/**
+ * Intro del centro. Es la única sección de la home que presenta el negocio
+ * completo: el hero vende la ubicación, la destacada se especializa en el
+ * descontracturante y el listado enumera. Acá las dos verticales aparecen
+ * juntas porque son dos negocios con intención de búsqueda distinta.
+ *
+ * Estructura en dos capas, a propósito:
+ *
+ *  1. "Quiénes somos" es el ancla fija. Titular y entradilla siempre
+ *     visibles, sin nada que los mueva. Es lo primero que se lee y no
+ *     compite con las verticales.
+ *  2. Masoterapia y estética van en pastillas. Solo se lee una a la vez, que
+ *     es lo que evita que la sección se vea como un muro de texto.
+ *
+ * Las pastillas se implementan con radios ocultos + CSS, sin JavaScript: los
+ * tres paneles existen siempre en el HTML y solo se alterna su visibilidad
+ * con `display`. Eso importa para SEO — esconder los paneles con JS o no
+ * renderizarlos dejaría el contenido de estética fuera del índice, y estética
+ * es justamente una de las dos verticales que el sitio tiene que posicionar.
+ * El estado inicial lo fija `checked` en el HTML, así se ve bien sin CSS.
+ */
+import { Image } from 'astro:assets';
+import fotoEspalda from '../assets/fotos/masaje-espalda.jpeg';
+
+/** Imágenes de cada panel. Reemplazar el archivo por la foto real cuando llegue. */
+const fotoMasoterapia = fotoEspalda;
+---
+
+<section class="intro max-w-6xl mx-auto px-6 py-[var(--spacing-seccion)]">
+  <!-- Capa 1: ancla fija. Cabecera y entradilla comparten grilla; en desktop
+       el titular va a la izquierda y el texto a la derecha, corriendo a media
+       altura. En filas separadas el titular empujaría el párrafo hacia abajo
+       y quedaría un hueco al medio en vez de una composición. -->
+  <div class="grid gap-8 lg:grid-cols-12 lg:gap-16">
+    <div class="lg:col-span-7">
+      <p class="text-xs uppercase tracking-[0.3em] text-tierra-400 mb-6">
+        Quiénes somos
+      </p>
+      {/* `text-balance` reparte las líneas parejo en vez de dejar una palabra
+          colgando. El `br` arma el corte en desktop, donde la medida es ancha;
+          en móvil el salto lo decide el ancho. El espacio antes de `en` es
+          explícito porque el colapso de HTML se lo come al colapsar el `br`. */}
+      <h2
+        class="font-serif text-3xl md:text-4xl lg:text-5xl text-tierra-900 leading-[1.15] text-balance"
+      >
+        Dos formas de cuidarte,<br class="hidden md:block" />{' '}en un mismo lugar
+      </h2>
+    </div>
+
+    <div class="lg:col-span-5 lg:pt-14">
+      <p class="text-tierra-700 leading-relaxed mb-5 text-lg">
+        Jade Belleza y Spa nace de la convicción de que el bienestar no es un lujo: es una
+        necesidad.
+      </p>
+      <p class="text-tierra-700 leading-relaxed">
+        Por eso el centro está armado sobre dos trabajos que se complementan. Detrás de cada
+        servicio hay una evaluación previa, una técnica elegida para tu caso y una mano que
+        se adapta a cómo llegás ese día, no a un protocolo fijo.
+      </p>
+    </div>
+  </div>
+
+  <!-- Capa 2: pastillas con las dos verticales. Los radios van primero en el
+       DOM para poder seleccionarlos con `~` sin JavaScript. -->
+  <div class="intro-verticales mt-20">
+    <input
+      type="radio"
+      name="vertical"
+      id="vertical-masoterapia"
+      class="intro-radio sr-only"
+      checked
+    />
+    <input type="radio" name="vertical" id="vertical-estetica" class="intro-radio sr-only" />
+
+    <div
+      class="intro-pastillas grid grid-cols-2 gap-2 p-1.5 rounded-full bg-crema-100 border border-tierra-900/8"
+      role="tablist"
+      aria-label="Verticales del centro"
+    >
+      <label for="vertical-masoterapia" class="intro-pastilla">
+        <span class="intro-pastilla__num">01</span>
+        Masoterapia clínica
+      </label>
+      <label for="vertical-estetica" class="intro-pastilla">
+        <span class="intro-pastilla__num">02</span>
+        Estética integral
+      </label>
+    </div>
+
+    <!-- Panel masoterapia -->
+    <article class="intro-panel intro-panel--masoterapia">
+      <div class="intro-panel__grid">
+        <div class="intro-panel__media">
+          <Image
+            src={fotoMasoterapia}
+            alt="Roxana aplicando un masaje descontracturante sobre la espalda de una clienta"
+            widths={[480, 720, 960]}
+            sizes="(min-width: 1024px) 45vw, 100vw"
+            format="webp"
+            quality={82}
+            class="intro-panel__foto"
+          />
+          <div class="intro-panel__marco" aria-hidden="true"></div>
+        </div>
+
+        <div class="intro-panel__texto">
+          {/* `aria-pressed` no aplica a un label; el estado activo se comunica
+              visualmente y el foco real vive en el radio. */}
+          <p class="intro-panel__eyebrow">Terapias manuales</p>
+          <h3 class="intro-panel__titulo">
+            <a href="/servicios/#masoterapia" class="intro-panel__titulo-link">
+              Masoterapia clínica
+            </a>
+          </h3>
+          <p class="intro-panel__parrafo">
+            Terapias manuales para el dolor y la tensión que se acumulan sin que nadie los
+            atienda: contracturas, rigidez de cuello y hombros, molestias lumbares, estrés que
+            se instala en la espalda. El masaje descontracturante, el drenaje linfático y las
+            técnicas con calor trabajan cada uno sobre un problema distinto.
+          </p>
+          <a href="/servicios/#masoterapia" class="enlace-flecha intro-panel__cta">
+            Ver tratamientos
+            <svg class="size-3.5" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path
+                d="M2 7h10M8 3l4 4-4 4"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </article>
+
+    <!-- Panel estética. La foto todavía no existe: el recuadro marcado indica
+         qué imagen falta y con qué encuadre. Reemplazar por una foto real del
+         tratamiento (limpieza facial o aparatología), no stock. -->
+    <article class="intro-panel intro-panel--estetica">
+      <div class="intro-panel__grid">
+        <div class="intro-panel__media">
+          <div
+            class="intro-panel__foto intro-panel__foto--pendiente"
+            role="img"
+            aria-label="Foto pendiente: limpieza facial o tratamiento con aparatología"
+          >
+            <span>
+              [Foto pendiente]<br />
+              Limpieza facial o aparatología<br />
+              <em>encuadre vertical, luz cálida</em>
+            </span>
+          </div>
+          <div class="intro-panel__marco" aria-hidden="true"></div>
+        </div>
+
+        <div class="intro-panel__texto">
+          <p class="intro-panel__eyebrow">Cuidado de la piel</p>
+          <h3 class="intro-panel__titulo">
+            <a href="/servicios/#estetica" class="intro-panel__titulo-link">
+              Estética integral
+            </a>
+          </h3>
+          <p class="intro-panel__parrafo">
+            Tratamientos para el cuidado que sostiene la piel en el tiempo: limpieza facial
+            profunda, hidratación y trabajo corporal con aparatología. Resultados visibles, con
+            la misma evaluación y el mismo trato personalizado que en cada sesión de
+            masoterapia.
+          </p>
+          <a href="/servicios/#estetica" class="enlace-flecha intro-panel__cta">
+            Ver tratamientos
+            <svg class="size-3.5" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path
+                d="M2 7h10M8 3l4 4-4 4"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <!-- Cierre: dato de ubicación. Va con la regla arriba para que se lea como
+       cierre de sección y no como un párrafo que quedó suelto. -->
+  <p
+    class="text-tierra-700 leading-relaxed mt-20 max-w-2xl pt-8 border-t border-tierra-900/10"
+  >
+    Estamos en <strong class="font-medium text-tierra-900">Walker Martínez, La Florida</strong>,
+    con atención personalizada y hora agendada: cada sesión se arma desde lo que traés ese
+    día.
+  </p>
+</section>
+
+<style>
+  /* Las pastillas alternan los paneles sin JavaScript. Regla general:
+     `display: none` en todos, y el que sigue al radio marcado se muestra.
+     El `~` es hermano general, por eso los inputs van antes en el DOM. */
+  .intro-panel {
+    display: none;
+  }
+
+  #vertical-masoterapia:checked ~ .intro-panel--masoterapia,
+  #vertical-estetica:checked ~ .intro-panel--estetica {
+    display: block;
+  }
+
+  #vertical-masoterapia:checked ~ .intro-pastillas label[for='vertical-masoterapia'],
+  #vertical-estetica:checked ~ .intro-pastillas label[for='vertical-estetica'] {
+    background-color: var(--color-tierra-900);
+    color: var(--color-crema-50);
+  }
+
+  #vertical-masoterapia:focus-visible ~ .intro-pastillas label[for='vertical-masoterapia'],
+  #vertical-estetica:focus-visible ~ .intro-pastillas label[for='vertical-estetica'] {
+    outline: 2px solid var(--color-tierra-700);
+    outline-offset: 2px;
+  }
+
+  .intro-pastilla {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    /* Sin `text-transform: uppercase` ni tracking en móvil: a 390px dos
+       pastillas con "MASOTERAPIA CLÍNICA" y "ESTÉTICA INTEGRAL" en mayúsculas
+       espaciadas no entran y el texto parte en dos líneas. En versalitas solo
+       desde tablet, donde hay ancho. */
+    padding: 0.8rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    line-height: 1.2;
+    text-align: center;
+    color: var(--color-tierra-600);
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color 0.3s var(--ease-suave),
+      color 0.3s var(--ease-suave);
+  }
+
+  .intro-pastilla__num {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .intro-pastilla {
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.85rem 1.5rem;
+    }
+
+    .intro-pastilla__num {
+      display: inline;
+      font-family: var(--font-serif);
+      font-size: 0.95rem;
+      letter-spacing: 0;
+      opacity: 0.55;
+    }
+  }
+
+  @media (hover: hover) {
+    .intro-pastilla:hover {
+      background-color: color-mix(in oklch, var(--color-tierra-900) 8%, transparent);
+    }
+  }
+
+  /* Paneles. Misma grilla en ambos para que al alternar no salte el layout:
+     la foto queda a la izquierda y el texto a la derecha, sin excepción. */
+  .intro-panel__grid {
+    display: grid;
+    gap: 2rem;
+    margin-top: 2.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .intro-panel__grid {
+      grid-template-columns: 5fr 6fr;
+      gap: 4rem;
+      align-items: center;
+      margin-top: 3.5rem;
+    }
+  }
+
+  .intro-panel__media {
+    position: relative;
+  }
+
+  /* Recorte centrado, no `top`: en este encuadre la acción —las manos sobre
+     la espalda— vive al medio de la foto, y anclar arriba muestra techo y
+     pared vacía. */
+  .intro-panel__foto {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 2px;
+    display: block;
+  }
+
+  /* La foto pendiente reemplaza a la real sin romper la maqueta: mismo
+     aspect-ratio, así cuando llegue la imagen no se mueve nada. */
+  .intro-panel__foto--pendiente {
+    display: grid;
+    place-items: center;
+    padding: 1.5rem;
+    background-color: var(--color-tierra-100);
+    color: var(--color-tierra-500);
+    font-size: 0.7rem;
+    line-height: 1.7;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .intro-panel__foto--pendiente em {
+    text-transform: none;
+    letter-spacing: 0.02em;
+    font-style: italic;
+    opacity: 0.75;
+  }
+
+  /* El bloque de texto de al lado es claro y la foto tiene paredes blancas en
+     el borde; sin este anillo los dos se funden y la imagen pierde su borde. */
+  .intro-panel__marco {
+    position: absolute;
+    inset: 0;
+    border-radius: 2px;
+    box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--color-tierra-900) 10%, transparent);
+    pointer-events: none;
+  }
+
+  .intro-panel__eyebrow {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--color-tierra-400);
+    margin-bottom: 1rem;
+  }
+
+  .intro-panel__titulo {
+    font-family: var(--font-serif);
+    font-size: 1.75rem;
+    line-height: 1.15;
+    color: var(--color-tierra-900);
+    margin-bottom: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .intro-panel__titulo {
+      font-size: 2.25rem;
+    }
+  }
+
+  .intro-panel__titulo-link {
+    transition: color 0.3s var(--ease-suave);
+  }
+
+  .intro-panel__parrafo {
+    color: var(--color-tierra-700);
+    line-height: 1.75;
+    margin-bottom: 1.75rem;
+    max-width: 46ch;
+  }
+
+  /* Enlace con flecha que se desplaza al hover. El subrayado crece desde la
+     izquierda, igual que el del logo del header: el mismo gesto a otra escala. */
+  .enlace-flecha {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    position: relative;
+    padding-bottom: 2px;
+    transition: color 0.3s var(--ease-suave);
+  }
+
+  .enlace-flecha::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 1px;
+    width: 100%;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s var(--ease-suave);
+  }
+
+  .enlace-flecha svg {
+    transition: translate 0.4s var(--ease-suave);
+  }
+
+  .intro-panel__cta {
+    font-size: 0.875rem;
+    color: var(--color-tierra-600);
+  }
+
+  @media (hover: hover) {
+    .enlace-flecha:hover::after {
+      transform: scaleX(1);
+    }
+
+    .enlace-flecha:hover svg {
+      translate: 3px 0;
+    }
+
+    .intro-panel__titulo-link:hover {
+      color: var(--color-tierra-600);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .enlace-flecha::after,
+    .enlace-flecha svg,
+    .intro-pastilla {
+      transition: none;
+    }
+  }
+</style>

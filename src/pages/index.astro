@@ -1,10 +1,13 @@
 ---
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import fotoEspalda from '../assets/fotos/masaje-espalda.jpeg';
 import Base from '../layouts/Base.astro';
 import SEO from '../components/SEO.astro';
 import Hero from '../components/Hero.astro';
 import BarraBeneficios from '../components/BarraBeneficios.astro';
 import type { Beneficio } from '../components/BarraBeneficios.astro';
+import IntroCentro from '../components/IntroCentro.astro';
 import { SITE, whatsappLink } from '../data/site';
 import { negocioLocal } from '../data/schema';
 import { VARIANTES_HERO, type VarianteHero } from '../data/hero';
@@ -114,76 +117,7 @@ const faq = [
     <BarraBeneficios slot="cierre" beneficios={beneficios} />
   </Hero>
 
-  <!-- INTRO: presenta el centro completo. Es la única sección de la home que
-       puede hacerlo — el hero vende la ubicación, la destacada se especializa
-       en el descontracturante y el listado enumera. Acá las dos verticales
-       pesan igual, porque son dos negocios con intención de búsqueda distinta
-       y ninguna es accesoria. -->
-  <section class="max-w-6xl mx-auto px-6 py-[var(--spacing-seccion)]">
-    <div class="max-w-3xl">
-      <h2 class="font-serif text-3xl md:text-4xl text-tierra-900 mb-6">
-        Dos formas de cuidarte, en un mismo lugar
-      </h2>
-      <p class="text-tierra-700 leading-relaxed mb-4">
-        Jade Belleza y Spa nace de la convicción de que el bienestar no es un lujo: es una
-        necesidad. Cada sesión se piensa como un momento para detenerse, respirar y volver
-        al cuerpo.
-      </p>
-      <p class="text-tierra-700 leading-relaxed">
-        Por eso el centro está armado sobre dos trabajos que se complementan: aliviar lo que
-        duele y cuidar lo que se ve. Detrás de cada servicio hay una evaluación previa, una
-        técnica elegida para tu caso y una mano que se adapta a cómo llegás ese día, no a un
-        protocolo fijo.
-      </p>
-    </div>
-
-    <div class="grid gap-10 md:grid-cols-2 mt-14">
-      <div class="border-t border-tierra-900/10 pt-8">
-        <h3 class="font-serif text-xl text-tierra-900 mb-4">
-          <a href="/servicios/#masoterapia" class="transition-colors hover:text-tierra-600">
-            Masoterapia clínica
-          </a>
-        </h3>
-        <p class="text-tierra-700 leading-relaxed mb-4">
-          Terapias manuales para el dolor y la tensión que se acumulan sin que nadie los
-          atienda: contracturas, rigidez de cuello y hombros, molestias lumbares, estrés que
-          se instala en la espalda. El masaje descontracturante, el drenaje linfático y las
-          técnicas con calor trabajan cada uno sobre un problema distinto.
-        </p>
-        <a
-          href="/servicios/#masoterapia"
-          class="text-sm text-tierra-600 underline underline-offset-4 hover:text-tierra-900 transition-colors"
-        >
-          Ver tratamientos
-        </a>
-      </div>
-      <div class="border-t border-tierra-900/10 pt-8">
-        <h3 class="font-serif text-xl text-tierra-900 mb-4">
-          <a href="/servicios/#estetica" class="transition-colors hover:text-tierra-600">
-            Estética integral
-          </a>
-        </h3>
-        <p class="text-tierra-700 leading-relaxed mb-4">
-          Tratamientos para el cuidado que sostiene la piel en el tiempo: limpieza facial
-          profunda, hidratación y trabajo corporal con aparatología. Resultados visibles, con
-          la misma evaluación y el mismo trato personalizado que en cada sesión de
-          masoterapia.
-        </p>
-        <a
-          href="/servicios/#estetica"
-          class="text-sm text-tierra-600 underline underline-offset-4 hover:text-tierra-900 transition-colors"
-        >
-          Ver tratamientos
-        </a>
-      </div>
-    </div>
-
-    <p class="text-tierra-700 leading-relaxed mt-14 max-w-3xl">
-      Estamos en <strong class="font-medium text-tierra-900">Walker Martínez, La Florida</strong>,
-      con atención personalizada y hora agendada: cada sesión se arma desde lo que traés ese
-      día.
-    </p>
-  </section>
+  <IntroCentro />
 
   <!-- SERVICIOS -->
   <section id="servicios" class="bg-crema-100 py-[var(--spacing-seccion)]">
@@ -237,11 +171,24 @@ const faq = [
   <!-- DESTACADO: DESCONTRACTURANTE -->
   <section class="py-[var(--spacing-seccion)]">
     <div class="max-w-6xl mx-auto px-6 grid gap-14 lg:grid-cols-2 items-center">
-      <div class="bg-tierra-300 aspect-[4/3] rounded-sm grid place-items-center">
-        <!-- PLACEHOLDER: foto real del servicio estrella -->
-        <p class="text-tierra-600 text-sm tracking-widest uppercase px-6 text-center">
-          [Imagen: masaje descontracturante]
-        </p>
+      <div class="relative">
+        {/* La foto es vertical y la caja horizontal, así que se recorta con
+            `object-cover` y se ancla arriba (`object-top`): en el original
+            sobra techo y una pared vacía a la derecha, y el gesto —manos sobre
+            la espalda— vive en el tercio superior. */}
+        <Image
+          src={fotoEspalda}
+          alt="Roxana aplicando un masaje descontracturante sobre la espalda de una clienta"
+          widths={[480, 720, 960]}
+          sizes="(min-width: 1024px) 50vw, 100vw"
+          format="webp"
+          quality={82}
+          class="aspect-[4/3] w-full object-cover object-top rounded-sm"
+        />
+        {/* Cuña en la esquina: el bloque de texto de al lado es claro y la foto
+            tiene paredes blancas en el borde derecho; sin esto los dos se
+            funden y la imagen pierde su borde. */}
+        <div class="pointer-events-none absolute inset-0 rounded-sm ring-1 ring-inset ring-tierra-900/10"></div>
       </div>
 
       <div>
