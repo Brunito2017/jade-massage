@@ -20,11 +20,28 @@
  * es justamente una de las dos verticales que el sitio tiene que posicionar.
  * El estado inicial lo fija `checked` en el HTML, así se ve bien sin CSS.
  */
-import { Image } from 'astro:assets';
-import fotoEspalda from '../assets/fotos/masaje-espalda.jpeg';
 
-/** Imágenes de cada panel. Reemplazar el archivo por la foto real cuando llegue. */
-const fotoMasoterapia = fotoEspalda;
+const verticales = [
+  {
+    id: 'masoterapia',
+    num: '01',
+    pastilla: 'Masoterapia clínica',
+    eyebrow: 'Terapias manuales',
+    titulo: 'Masoterapia clínica',
+    parrafo:
+      'Terapias manuales para el dolor y la tensión que se acumulan sin que nadie los atienda: contracturas, rigidez de cuello y hombros, molestias lumbares, estrés que se instala en la espalda. El masaje descontracturante, el drenaje linfático y las técnicas con calor trabajan cada uno sobre un problema distinto.',
+  },
+  {
+    id: 'estetica',
+    num: '02',
+    pastilla: 'Estética integral',
+    eyebrow: 'Cuidado de la piel',
+    titulo: 'Estética integral',
+    parrafo:
+      'Tratamientos para el cuidado que sostiene la piel en el tiempo: limpieza facial profunda, hidratación y trabajo corporal con aparatología. Resultados visibles, con la misma evaluación y el mismo trato personalizado que en cada sesión de masoterapia.',
+  },
+];
+
 ---
 
 <section class="intro max-w-6xl mx-auto px-6 py-[var(--spacing-seccion)]">
@@ -61,9 +78,30 @@ const fotoMasoterapia = fotoEspalda;
     </div>
   </div>
 
+  <!-- Divisor. Separa el ancla fija de las verticales: sin él las pastillas
+       quedan pegadas al párrafo de arriba y la sección se lee como un solo
+       bloque. -->
+  <div class="intro-divisor" role="presentation">
+    <span class="intro-divisor__linea"></span>
+    <svg class="intro-divisor__hoja" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M12 21c0-6 4-10 9-11-1 6-4 9-9 11Z"
+        stroke="currentColor"
+        stroke-width="1"
+        stroke-linejoin="round"></path>
+      <path
+        d="M12 21c0-6-4-10-9-11 1 6 4 9 9 11Z"
+        stroke="currentColor"
+        stroke-width="1"
+        stroke-linejoin="round"></path>
+      <path d="M12 21V9" stroke="currentColor" stroke-width="1" stroke-linecap="round"></path>
+    </svg>
+    <span class="intro-divisor__linea"></span>
+  </div>
+
   <!-- Capa 2: pastillas con las dos verticales. Los radios van primero en el
        DOM para poder seleccionarlos con `~` sin JavaScript. -->
-  <div class="intro-verticales mt-20">
+  <div class="intro-verticales">
     <input
       type="radio"
       name="vertical"
@@ -78,109 +116,50 @@ const fotoMasoterapia = fotoEspalda;
       role="tablist"
       aria-label="Verticales del centro"
     >
-      <label for="vertical-masoterapia" class="intro-pastilla">
-        <span class="intro-pastilla__num">01</span>
-        Masoterapia clínica
-      </label>
-      <label for="vertical-estetica" class="intro-pastilla">
-        <span class="intro-pastilla__num">02</span>
-        Estética integral
-      </label>
+      {
+        verticales.map((v) => (
+          <label for={`vertical-${v.id}`} class="intro-pastilla">
+            <span class="intro-pastilla__num">{v.num}</span>
+            {v.pastilla}
+          </label>
+        ))
+      }
     </div>
 
-    <!-- Panel masoterapia -->
-    <article class="intro-panel intro-panel--masoterapia">
-      <div class="intro-panel__grid">
-        <div class="intro-panel__media">
-          <Image
-            src={fotoMasoterapia}
-            alt="Roxana aplicando un masaje descontracturante sobre la espalda de una clienta"
-            widths={[480, 720, 960]}
-            sizes="(min-width: 1024px) 45vw, 100vw"
-            format="webp"
-            quality={82}
-            class="intro-panel__foto"
-          />
-          <div class="intro-panel__marco" aria-hidden="true"></div>
-        </div>
+    <!-- Paneles. Sin foto: el texto es el protagonista y la imagen competía
+         con él. Se alternan por CSS, no por JS.
 
-        <div class="intro-panel__texto">
-          {/* `aria-pressed` no aplica a un label; el estado activo se comunica
-              visualmente y el foco real vive en el radio. */}
-          <p class="intro-panel__eyebrow">Terapias manuales</p>
-          <h3 class="intro-panel__titulo">
-            <a href="/servicios/#masoterapia" class="intro-panel__titulo-link">
-              Masoterapia clínica
+         La caja reserva alto en desktop (`--alto-panel`) para que al cambiar
+         de pastilla no salte el cierre de abajo. Los dos párrafos miden casi
+         lo mismo; sin el piso, la diferencia de una línea se traduce en un
+         salto visible del bloque de dirección. -->
+    <div class="intro-paneles">
+      {
+        verticales.map((v) => (
+          <article class:list={['intro-panel', `intro-panel--${v.id}`]}>
+            <p class="intro-panel__eyebrow">{v.eyebrow}</p>
+            <h3 class="intro-panel__titulo">
+              <a href={`/servicios/#${v.id}`} class="intro-panel__titulo-link">
+                {v.titulo}
+              </a>
+            </h3>
+            <p class="intro-panel__parrafo">{v.parrafo}</p>
+            <a href={`/servicios/#${v.id}`} class="enlace-flecha intro-panel__cta">
+              Ver tratamientos
+              <svg class="size-3.5" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path
+                  d="M2 7h10M8 3l4 4-4 4"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
             </a>
-          </h3>
-          <p class="intro-panel__parrafo">
-            Terapias manuales para el dolor y la tensión que se acumulan sin que nadie los
-            atienda: contracturas, rigidez de cuello y hombros, molestias lumbares, estrés que
-            se instala en la espalda. El masaje descontracturante, el drenaje linfático y las
-            técnicas con calor trabajan cada uno sobre un problema distinto.
-          </p>
-          <a href="/servicios/#masoterapia" class="enlace-flecha intro-panel__cta">
-            Ver tratamientos
-            <svg class="size-3.5" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-              <path
-                d="M2 7h10M8 3l4 4-4 4"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"></path>
-            </svg>
-          </a>
-        </div>
-      </div>
-    </article>
-
-    <!-- Panel estética. La foto todavía no existe: el recuadro marcado indica
-         qué imagen falta y con qué encuadre. Reemplazar por una foto real del
-         tratamiento (limpieza facial o aparatología), no stock. -->
-    <article class="intro-panel intro-panel--estetica">
-      <div class="intro-panel__grid">
-        <div class="intro-panel__media">
-          <div
-            class="intro-panel__foto intro-panel__foto--pendiente"
-            role="img"
-            aria-label="Foto pendiente: limpieza facial o tratamiento con aparatología"
-          >
-            <span>
-              [Foto pendiente]<br />
-              Limpieza facial o aparatología<br />
-              <em>encuadre vertical, luz cálida</em>
-            </span>
-          </div>
-          <div class="intro-panel__marco" aria-hidden="true"></div>
-        </div>
-
-        <div class="intro-panel__texto">
-          <p class="intro-panel__eyebrow">Cuidado de la piel</p>
-          <h3 class="intro-panel__titulo">
-            <a href="/servicios/#estetica" class="intro-panel__titulo-link">
-              Estética integral
-            </a>
-          </h3>
-          <p class="intro-panel__parrafo">
-            Tratamientos para el cuidado que sostiene la piel en el tiempo: limpieza facial
-            profunda, hidratación y trabajo corporal con aparatología. Resultados visibles, con
-            la misma evaluación y el mismo trato personalizado que en cada sesión de
-            masoterapia.
-          </p>
-          <a href="/servicios/#estetica" class="enlace-flecha intro-panel__cta">
-            Ver tratamientos
-            <svg class="size-3.5" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-              <path
-                d="M2 7h10M8 3l4 4-4 4"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"></path>
-            </svg>
-          </a>
-        </div>
-      </div>
-    </article>
+          </article>
+        ))
+      }
+    </div>
   </div>
 
   <!-- Cierre: dato de ubicación. Va con la regla arriba para que se lea como
@@ -195,26 +174,98 @@ const fotoMasoterapia = fotoEspalda;
 </section>
 
 <style>
-  /* Las pastillas alternan los paneles sin JavaScript. Regla general:
-     `display: none` en todos, y el que sigue al radio marcado se muestra.
-     El `~` es hermano general, por eso los inputs van antes en el DOM. */
+  /* Divisor: línea — hoja — línea. El trazo es de 1px y el motivo chico, para
+     que separe sin convertirse en protagonista. */
+  .intro-divisor {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 3rem 0;
+    color: var(--color-tierra-300);
+  }
+
+  @media (min-width: 768px) {
+    .intro-divisor {
+      gap: 1.5rem;
+      margin: 4.5rem 0;
+    }
+  }
+
+  .intro-divisor__linea {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      color-mix(in oklch, var(--color-tierra-300) 70%, transparent)
+    );
+  }
+
+  .intro-divisor__linea:last-child {
+    background: linear-gradient(
+      to left,
+      transparent,
+      color-mix(in oklch, var(--color-tierra-300) 70%, transparent)
+    );
+  }
+
+  .intro-divisor__hoja {
+    width: 20px;
+    height: 20px;
+    flex: 0 0 auto;
+  }
+
+  @media (min-width: 768px) {
+    .intro-divisor__hoja {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  /* Las pastillas alternan los paneles sin JavaScript.
+
+     Los paneles van dentro de `.intro-paneles`, así que ya no son hermanos
+     del radio y el selector `~` no los alcanza. Se resuelve con `:has()`: el
+     contenedor que contiene el radio marcado muestra el panel que le toca.
+     `:has()` está soportado en todos los navegadores actuales (Chrome 105+,
+     Safari 15.4+, Firefox 121+); sin él se verían los dos paneles, que es un
+     degradado aceptable y no una página rota. */
   .intro-panel {
     display: none;
   }
 
-  #vertical-masoterapia:checked ~ .intro-panel--masoterapia,
-  #vertical-estetica:checked ~ .intro-panel--estetica {
+  .intro-verticales:has(#vertical-masoterapia:checked) .intro-panel--masoterapia,
+  .intro-verticales:has(#vertical-estetica:checked) .intro-panel--estetica {
     display: block;
   }
 
-  #vertical-masoterapia:checked ~ .intro-pastillas label[for='vertical-masoterapia'],
-  #vertical-estetica:checked ~ .intro-pastillas label[for='vertical-estetica'] {
+  /* Piso de alto para el área de paneles. Los dos textos difieren en una
+     línea, y sin esto el cierre de la sección se corre al cambiar de
+     pastilla. Los valores salen de medir los dos paneles renderizados:
+     a 390px el más alto pide 362px (el otro 334px), y desde tablet los dos
+     miden 259px, así que ahí el piso ya no hace falta. */
+  .intro-paneles {
+    margin-top: 2.5rem;
+    min-height: 22.75rem;
+  }
+
+  @media (min-width: 768px) {
+    .intro-paneles {
+      margin-top: 3rem;
+      min-height: 0;
+    }
+  }
+
+  .intro-verticales:has(#vertical-masoterapia:checked)
+    label[for='vertical-masoterapia'],
+  .intro-verticales:has(#vertical-estetica:checked) label[for='vertical-estetica'] {
     background-color: var(--color-tierra-900);
     color: var(--color-crema-50);
   }
 
-  #vertical-masoterapia:focus-visible ~ .intro-pastillas label[for='vertical-masoterapia'],
-  #vertical-estetica:focus-visible ~ .intro-pastillas label[for='vertical-estetica'] {
+  .intro-verticales:has(#vertical-masoterapia:focus-visible)
+    label[for='vertical-masoterapia'],
+  .intro-verticales:has(#vertical-estetica:focus-visible) label[for='vertical-estetica'] {
     outline: 2px solid var(--color-tierra-700);
     outline-offset: 2px;
   }
@@ -224,10 +275,9 @@ const fotoMasoterapia = fotoEspalda;
     align-items: center;
     justify-content: center;
     gap: 0.6rem;
-    /* Sin `text-transform: uppercase` ni tracking en móvil: a 390px dos
-       pastillas con "MASOTERAPIA CLÍNICA" y "ESTÉTICA INTEGRAL" en mayúsculas
-       espaciadas no entran y el texto parte en dos líneas. En versalitas solo
-       desde tablet, donde hay ancho. */
+    /* Sin mayúsculas espaciadas en móvil: a 390px "MASOTERAPIA CLÍNICA" y
+       "ESTÉTICA INTEGRAL" no entran en dos pastillas y el texto parte en dos
+       líneas. Las versalitas entran desde tablet, donde hay ancho. */
     padding: 0.8rem 0.75rem;
     border-radius: 999px;
     font-size: 0.8rem;
@@ -268,71 +318,6 @@ const fotoMasoterapia = fotoEspalda;
     }
   }
 
-  /* Paneles. Misma grilla en ambos para que al alternar no salte el layout:
-     la foto queda a la izquierda y el texto a la derecha, sin excepción. */
-  .intro-panel__grid {
-    display: grid;
-    gap: 2rem;
-    margin-top: 2.5rem;
-  }
-
-  @media (min-width: 1024px) {
-    .intro-panel__grid {
-      grid-template-columns: 5fr 6fr;
-      gap: 4rem;
-      align-items: center;
-      margin-top: 3.5rem;
-    }
-  }
-
-  .intro-panel__media {
-    position: relative;
-  }
-
-  /* Recorte centrado, no `top`: en este encuadre la acción —las manos sobre
-     la espalda— vive al medio de la foto, y anclar arriba muestra techo y
-     pared vacía. */
-  .intro-panel__foto {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-    object-position: center;
-    border-radius: 2px;
-    display: block;
-  }
-
-  /* La foto pendiente reemplaza a la real sin romper la maqueta: mismo
-     aspect-ratio, así cuando llegue la imagen no se mueve nada. */
-  .intro-panel__foto--pendiente {
-    display: grid;
-    place-items: center;
-    padding: 1.5rem;
-    background-color: var(--color-tierra-100);
-    color: var(--color-tierra-500);
-    font-size: 0.7rem;
-    line-height: 1.7;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    text-align: center;
-  }
-
-  .intro-panel__foto--pendiente em {
-    text-transform: none;
-    letter-spacing: 0.02em;
-    font-style: italic;
-    opacity: 0.75;
-  }
-
-  /* El bloque de texto de al lado es claro y la foto tiene paredes blancas en
-     el borde; sin este anillo los dos se funden y la imagen pierde su borde. */
-  .intro-panel__marco {
-    position: absolute;
-    inset: 0;
-    border-radius: 2px;
-    box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--color-tierra-900) 10%, transparent);
-    pointer-events: none;
-  }
-
   .intro-panel__eyebrow {
     font-size: 0.7rem;
     text-transform: uppercase;
@@ -359,11 +344,13 @@ const fotoMasoterapia = fotoEspalda;
     transition: color 0.3s var(--ease-suave);
   }
 
+  /* Sin foto, el párrafo se queda en una medida cómoda de lectura en vez de
+     estirarse a lo ancho de las 6xl. */
   .intro-panel__parrafo {
     color: var(--color-tierra-700);
     line-height: 1.75;
     margin-bottom: 1.75rem;
-    max-width: 46ch;
+    max-width: 62ch;
   }
 
   /* Enlace con flecha que se desplaza al hover. El subrayado crece desde la
