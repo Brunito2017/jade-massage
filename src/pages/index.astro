@@ -114,11 +114,15 @@ const faq = [
     <BarraBeneficios slot="cierre" beneficios={beneficios} />
   </Hero>
 
-  <!-- INTRO -->
+  <!-- INTRO: presenta el centro completo. Es la única sección de la home que
+       puede hacerlo — el hero vende la ubicación, la destacada se especializa
+       en el descontracturante y el listado enumera. Acá las dos verticales
+       pesan igual, porque son dos negocios con intención de búsqueda distinta
+       y ninguna es accesoria. -->
   <section class="max-w-6xl mx-auto px-6 py-[var(--spacing-seccion)]">
     <div class="max-w-3xl">
       <h2 class="font-serif text-3xl md:text-4xl text-tierra-900 mb-6">
-        Cuidar el cuerpo, con calma
+        Dos formas de cuidarte, en un mismo lugar
       </h2>
       <p class="text-tierra-700 leading-relaxed mb-4">
         Jade Belleza y Spa nace de la convicción de que el bienestar no es un lujo: es una
@@ -126,37 +130,58 @@ const faq = [
         al cuerpo.
       </p>
       <p class="text-tierra-700 leading-relaxed">
-        Trabajamos la masoterapia clínica y la estética integral como dos puertas al mismo
-        lugar: aliviar lo que duele y cuidar lo que se ve. Detrás de cada servicio hay una
-        evaluación previa, una técnica elegida para tu caso y una mano que se adapta a cómo
-        llegás ese día, no a un protocolo fijo.
+        Por eso el centro está armado sobre dos trabajos que se complementan: aliviar lo que
+        duele y cuidar lo que se ve. Detrás de cada servicio hay una evaluación previa, una
+        técnica elegida para tu caso y una mano que se adapta a cómo llegás ese día, no a un
+        protocolo fijo.
       </p>
     </div>
 
     <div class="grid gap-10 md:grid-cols-2 mt-14">
       <div class="border-t border-tierra-900/10 pt-8">
-        <h3 class="font-serif text-xl text-tierra-900 mb-4">Masoterapia clínica</h3>
-        <p class="text-tierra-700 leading-relaxed">
-          Para el dolor y la tensión que se acumulan sin que nadie los atienda: contracturas,
-          rigidez de cuello y hombros, molestias lumbares, estrés que se instala en la
-          espalda. El masaje descontracturante es lo que más nos piden, y es el trabajo que
-          mejor define el enfoque de Jade.
+        <h3 class="font-serif text-xl text-tierra-900 mb-4">
+          <a href="/servicios/#masoterapia" class="transition-colors hover:text-tierra-600">
+            Masoterapia clínica
+          </a>
+        </h3>
+        <p class="text-tierra-700 leading-relaxed mb-4">
+          Terapias manuales para el dolor y la tensión que se acumulan sin que nadie los
+          atienda: contracturas, rigidez de cuello y hombros, molestias lumbares, estrés que
+          se instala en la espalda. El masaje descontracturante, el drenaje linfático y las
+          técnicas con calor trabajan cada uno sobre un problema distinto.
         </p>
+        <a
+          href="/servicios/#masoterapia"
+          class="text-sm text-tierra-600 underline underline-offset-4 hover:text-tierra-900 transition-colors"
+        >
+          Ver tratamientos
+        </a>
       </div>
       <div class="border-t border-tierra-900/10 pt-8">
-        <h3 class="font-serif text-xl text-tierra-900 mb-4">Estética integral</h3>
-        <p class="text-tierra-700 leading-relaxed">
-          Para el cuidado que sostiene la piel en el tiempo: limpieza facial profunda,
-          hidratación y tratamientos corporales. Trabajamos por resultados visibles y
-          cuidados, con la misma atención personalizada que en cada sesión de masoterapia.
+        <h3 class="font-serif text-xl text-tierra-900 mb-4">
+          <a href="/servicios/#estetica" class="transition-colors hover:text-tierra-600">
+            Estética integral
+          </a>
+        </h3>
+        <p class="text-tierra-700 leading-relaxed mb-4">
+          Tratamientos para el cuidado que sostiene la piel en el tiempo: limpieza facial
+          profunda, hidratación y trabajo corporal con aparatología. Resultados visibles, con
+          la misma evaluación y el mismo trato personalizado que en cada sesión de
+          masoterapia.
         </p>
+        <a
+          href="/servicios/#estetica"
+          class="text-sm text-tierra-600 underline underline-offset-4 hover:text-tierra-900 transition-colors"
+        >
+          Ver tratamientos
+        </a>
       </div>
     </div>
 
     <p class="text-tierra-700 leading-relaxed mt-14 max-w-3xl">
-      En <strong class="font-medium text-tierra-900">La Florida</strong>, con atención
-      personalizada y sin apuro: cada persona trae su historia, y cada sesión se arma desde
-      ahí.
+      Estamos en <strong class="font-medium text-tierra-900">Walker Martínez, La Florida</strong>,
+      con atención personalizada y hora agendada: cada sesión se arma desde lo que traés ese
+      día.
     </p>
   </section>
 

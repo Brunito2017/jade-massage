@@ -13,6 +13,27 @@ const servicios = (await getCollection('servicios')).sort(
 );
 const activos = servicios.filter((s) => s.data.activo);
 const inactivos = servicios.filter((s) => !s.data.activo);
+
+/**
+ * Agrupados por vertical, con ancla propia: la home enlaza cada uno de sus
+ * dos bloques a la mitad que le corresponde en vez de mandar a los dos al
+ * mismo índice. El orden de las verticales es fijo (masoterapia primero, que
+ * es el servicio estrella), no el que devuelva la colección.
+ */
+const verticales = [
+  {
+    id: 'masoterapia',
+    nombre: 'Masoterapia',
+    descripcion: 'Terapias manuales para el dolor, la tensión y la recuperación.',
+    servicios: activos.filter((s) => s.data.categoria === 'masoterapia'),
+  },
+  {
+    id: 'estetica',
+    nombre: 'Estética',
+    descripcion: 'Tratamientos para el cuidado de la piel y del cuerpo.',
+    servicios: activos.filter((s) => s.data.categoria === 'estetica'),
+  },
+];
 ---
 
 <Base>
@@ -34,29 +55,37 @@ const inactivos = servicios.filter((s) => !s.data.activo);
   </section>
 
   <section class="max-w-6xl mx-auto px-6 pb-24">
-    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {
-        activos.map((servicio) => (
-          <a
-            href={`/servicios/${servicio.data.slug}/`}
-            class="group block bg-crema-100 p-8 rounded-sm border border-tierra-900/8 hover:border-tierra-900/20 hover:shadow-sm transition-all"
-          >
-            <p class="text-xs uppercase tracking-widest text-tierra-400 mb-4">
-              {servicio.data.categoria === 'masoterapia' ? 'Masoterapia' : 'Estética'}
-            </p>
-            <h2 class="font-serif text-2xl text-tierra-900 mb-3 group-hover:text-tierra-600 transition-colors">
-              {servicio.data.nombre}
+    {
+      verticales.map((vertical) => (
+        <div id={vertical.id} class="scroll-mt-24 mb-20 last:mb-0">
+          <div class="max-w-2xl mb-10">
+            <h2 class="font-serif text-2xl md:text-3xl text-tierra-900 mb-3">
+              {vertical.nombre}
             </h2>
-            <p class="text-sm text-tierra-700 leading-relaxed mb-6">
-              {servicio.data.descripcion}
-            </p>
-            <span class="text-sm text-tierra-600 underline underline-offset-4">
-              Ver más
-            </span>
-          </a>
-        ))
-      }
-    </div>
+            <p class="text-tierra-700 leading-relaxed">{vertical.descripcion}</p>
+          </div>
+
+          <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {vertical.servicios.map((servicio) => (
+              <a
+                href={`/servicios/${servicio.data.slug}/`}
+                class="group block bg-crema-100 p-8 rounded-sm border border-tierra-900/8 hover:border-tierra-900/20 hover:shadow-sm transition-all"
+              >
+                <h3 class="font-serif text-2xl text-tierra-900 mb-3 group-hover:text-tierra-600 transition-colors">
+                  {servicio.data.nombre}
+                </h3>
+                <p class="text-sm text-tierra-700 leading-relaxed mb-6">
+                  {servicio.data.descripcion}
+                </p>
+                <span class="text-sm text-tierra-600 underline underline-offset-4">
+                  Ver más
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+      ))
+    }
 
     <div class="mt-16 pt-10 border-t border-tierra-900/10">
       <p class="text-sm uppercase tracking-[0.2em] text-tierra-500 mb-6">
