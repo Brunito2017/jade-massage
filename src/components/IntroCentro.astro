@@ -112,10 +112,16 @@ const verticales = [
     <input type="radio" name="vertical" id="vertical-estetica" class="intro-radio sr-only" />
 
     <div
-      class="intro-pastillas grid grid-cols-2 gap-2 p-1.5 rounded-full bg-crema-100 border border-tierra-900/8"
+      class="intro-pastillas rounded-full bg-crema-100 border border-tierra-900/8"
       role="tablist"
       aria-label="Verticales del centro"
     >
+      {/* Indicador deslizante. Es un solo elemento que se corre de una mitad a
+          la otra, en vez de pintar y despintar cada pastilla: el movimiento es
+          lo que se lee como interruptor. Va primero en el DOM y detrás de las
+          etiquetas, que son las que quedan por encima para recibir el click. */}
+      <span class="intro-pastillas__indicador" aria-hidden="true"></span>
+
       {
         verticales.map((v) => (
           <label for={`vertical-${v.id}`} class="intro-pastilla">
@@ -125,7 +131,6 @@ const verticales = [
         ))
       }
     </div>
-
     <!-- Paneles. Sin foto: el texto es el protagonista y la imagen competía
          con él. Se alternan por CSS, no por JS.
 
@@ -230,13 +235,103 @@ const verticales = [
      `:has()` está soportado en todos los navegadores actuales (Chrome 105+,
      Safari 15.4+, Firefox 121+); sin él se verían los dos paneles, que es un
      degradado aceptable y no una página rota. */
-  .intro-panel {
-    display: none;
+
+  /* Indicador deslizante. */
+
+  /* El relleno y la separación los pone el contenedor y los lee el indicador.
+     Escritos una sola vez: cuando estaban también en `gap-2`/`p-1.5` de
+     Tailwind, cambiar uno desincronizaba la cuenta en silencio. */
+  .intro-pastillas {
+    --relleno: 0.375rem;
+    --separacion: 0.5rem;
+
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--separacion);
+    padding: var(--relleno);
+    /* `isolate` para que el z-index del indicador y el de las pastillas se
+       resuelvan dentro de este bloque y no contra el resto de la página. */
+    isolation: isolate;
   }
 
+  /* Indicador deslizante.
+
+     En vez de calcular cuánto correrse, el indicador ocupa la misma celda de
+     la grilla que la pastilla marcada: `left` y `right` los resuelve el
+     navegador contra esa columna, así que mide exactamente la pastilla sin
+     importar el ancho ni el largo del texto, y el desplazamiento entre las dos
+     posiciones lo anima `translate` sobre la diferencia entre columnas.
+
+     Las dos versiones anteriores fallaron por lo mismo: sacaban el ancho y el
+     desplazamiento de un `calc()` sobre `50%`, y ese porcentaje no significa lo
+     mismo en `width` (543px) que en `translate` (la mitad), así que el
+     indicador se quedaba a mitad de camino. Acá no hay porcentaje propio: el
+     rectángulo sale de la grilla. */
+  .intro-pastillas__indicador {
+    position: absolute;
+    z-index: 0;
+    top: var(--relleno);
+    bottom: var(--relleno);
+    border-radius: 999px;
+    background-color: var(--color-tierra-900);
+    transition:
+      left 0.45s var(--ease-suave),
+      width 0.45s var(--ease-suave);
+  }
+
+  /* Cada pastilla marcada define el rectángulo del indicador. `left`/`width`
+     salen del `offsetLeft`/`offsetWidth` reales de la etiqueta, leídos desde la
+     izquierda del contenedor: el indicador es `absolute` dentro de un
+     contenedor `relative` con relleno, así que hay que restarle el relleno
+     para caer sobre el borde de la pastilla. */
+  .intro-verticales:has(#vertical-masoterapia:checked) .intro-pastillas__indicador {
+    left: var(--relleno);
+    width: calc(50% - var(--relleno) - 0.5 * var(--separacion));
+  }
+
+  .intro-verticales:has(#vertical-estetica:checked) .intro-pastillas__indicador {
+    left: calc(50% + 0.5 * var(--separacion));
+    width: calc(50% - var(--relleno) - 0.5 * var(--separacion));
+  }
+
+  /* Los paneles se apilan en la misma celda para poder cruzarlos: con
+     `display: none` no hay nada que animar, el cambio es un corte seco. En
+     `grid` los dos comparten fila y columna, así que el que está oculto no
+     empuja el layout y el contenedor mide lo que mide el visible. */
+  .intro-paneles {
+    display: grid;
+    margin-top: 2.5rem;
+    min-height: 22.75rem;
+  }
+
+  .intro-panel {
+    grid-area: 1 / 1;
+    opacity: 0;
+    visibility: hidden;
+    translate: 0 0.75rem;
+    transition:
+      opacity 0.4s var(--ease-suave),
+      translate 0.5s var(--ease-suave),
+      visibility 0s linear 0.5s;
+  }
+
+  /* El que entra espera a que el otro termine de irse: sin el retraso los dos
+     textos se cruzan y no se lee ninguno. */
   .intro-verticales:has(#vertical-masoterapia:checked) .intro-panel--masoterapia,
   .intro-verticales:has(#vertical-estetica:checked) .intro-panel--estetica {
-    display: block;
+    opacity: 1;
+    visibility: visible;
+    translate: 0 0;
+    transition-delay: 0.14s, 0.14s, 0s;
+  }
+
+  /* `visibility` se conmuta al final de la salida y al principio de la
+     entrada: así el panel que se va sigue visible mientras se desvanece, y deja
+     de estar en el orden de tabulación cuando termina. */
+  .intro-verticales:has(#vertical-masoterapia:checked) .intro-panel--estetica,
+  .intro-verticales:has(#vertical-estetica:checked) .intro-panel--masoterapia {
+    transition-delay: 0s, 0s, 0.5s;
   }
 
   /* Piso de alto para el área de paneles. Los dos textos difieren en una
@@ -244,23 +339,11 @@ const verticales = [
      pastilla. Los valores salen de medir los dos paneles renderizados:
      a 390px el más alto pide 362px (el otro 334px), y desde tablet los dos
      miden 259px, así que ahí el piso ya no hace falta. */
-  .intro-paneles {
-    margin-top: 2.5rem;
-    min-height: 22.75rem;
-  }
-
   @media (min-width: 768px) {
     .intro-paneles {
       margin-top: 3rem;
       min-height: 0;
     }
-  }
-
-  .intro-verticales:has(#vertical-masoterapia:checked)
-    label[for='vertical-masoterapia'],
-  .intro-verticales:has(#vertical-estetica:checked) label[for='vertical-estetica'] {
-    background-color: var(--color-tierra-900);
-    color: var(--color-crema-50);
   }
 
   .intro-verticales:has(#vertical-masoterapia:focus-visible)
@@ -271,6 +354,8 @@ const verticales = [
   }
 
   .intro-pastilla {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -286,9 +371,15 @@ const verticales = [
     color: var(--color-tierra-600);
     cursor: pointer;
     user-select: none;
-    transition:
-      background-color 0.3s var(--ease-suave),
-      color 0.3s var(--ease-suave);
+    /* Solo texto: el fondo lo pone el indicador que se desliza por detrás. Si
+       cada pastilla pintara su propio fondo, en el cruce se verían los dos
+       cuadros en vez de uno que viaja. */
+    transition: color 0.35s var(--ease-suave);
+  }
+
+  .intro-verticales:has(#vertical-masoterapia:checked) label[for='vertical-masoterapia'],
+  .intro-verticales:has(#vertical-estetica:checked) label[for='vertical-estetica'] {
+    color: var(--color-crema-50);
   }
 
   .intro-pastilla__num {
@@ -313,7 +404,12 @@ const verticales = [
   }
 
   @media (hover: hover) {
-    .intro-pastilla:hover {
+    /* Solo en la pastilla que no está elegida: la activa ya tiene encima el
+       indicador oscuro, y un fondo propio ahí se vería como un parche. */
+    .intro-verticales:has(#vertical-masoterapia:checked)
+      label[for='vertical-estetica']:hover,
+    .intro-verticales:has(#vertical-estetica:checked)
+      label[for='vertical-masoterapia']:hover {
       background-color: color-mix(in oklch, var(--color-tierra-900) 8%, transparent);
     }
   }
@@ -403,7 +499,9 @@ const verticales = [
   @media (prefers-reduced-motion: reduce) {
     .enlace-flecha::after,
     .enlace-flecha svg,
-    .intro-pastilla {
+    .intro-pastilla,
+    .intro-pastillas__indicador,
+    .intro-panel {
       transition: none;
     }
   }
