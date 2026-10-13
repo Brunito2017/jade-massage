@@ -1,0 +1,574 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+/**
+ * Servicios de la home — galería expandible.
+ *
+ * Réplica del módulo `expandable-image-gallery` de thenowmassage.com: tres
+ * franjas verticales en fila donde la que está activa se ensancha al doble,
+ * las vecinas se aprietan y el contenido de la activa se despliega dentro.
+ *
+ * No consulta la colección: recibe la lista ya resuelta por la página. El
+ * orden y la selección son decisiones de la home — acá solo se dibuja.
+ *
+ * Reglas del original que se conservan tal cual:
+ *
+ *  - El ancho sale de un solo número. Cada franja mide `100% / (n + 1)` y la
+ *    activa `200% / (n + 1)`. Con 3 servicios: 25% / 50% / 25%. Agregar un
+ *    cuarto no rompe nada, se reparte solo.
+ *  - El color de marca no es la foto: es un velo con `mix-blend-mode:
+ *    multiply` encima. Por eso las franjas inactivas se leen como planos de
+ *    color macizo y la activa deja respirar lo de abajo.
+ *  - Solo la activa muestra el texto de apoyo; las inactivas quedan con el
+ *    título suelto y centrado.
+ *
+ * Desvíos del original, a propósito:
+ *
+ *  - Sin fotos por servicio todavía (no hay material propio), la franja es un
+ *    color plano. El velo sigue haciendo su trabajo sobre el plano, así que
+ *    cuando llegue la foto solo hay que meterla dentro de `.servicio__fondo`
+ *    y el resto no se mueve.
+ *  - El original se activa con `onClick` y, si el módulo trae
+ *    `data-activate-slides-on-hover`, también con `mouseover`. Acá el hover es
+ *    CSS puro y el click es JS: sin JavaScript el bloque sigue siendo
+ *    navegable, porque el activo por defecto es un enlace real a la página del
+ *    servicio y las otras dos franjas también lo son.
+ */
+
+interface Props {
+  /** Servicios a mostrar en la galería, en orden de prioridad. */
+  servicios: CollectionEntry<'servicios'>[];
+  /** Servicios sin página propia — se listan al pie, sin enlace. */
+  inactivos: CollectionEntry<'servicios'>[];
+}
+
+const { servicios, inactivos } = Astro.props;
+
+/**
+ * Velo de cada franja. El tinte es el mismo para todas —es el gesto de marca—
+ * y lo que cambia es la opacidad, que es lo que hace que la activa se lea más
+ * clara que las otras.
+ *
+ * El orden sigue al de `servicios`: se pasa por índice y no por nombre para
+ * que agregar un servicio en el JSON no deje la paleta descolgada.
+ */
+const TINTES = ['#8a6b52', '#6f7a63', '#a8788a'];
+
+/** Paleta por defecto cuando la lista crece más allá de la tabla. */
+const TINTE_BASE = '#7a6552';
+
+function tinte(i: number): string {
+  return TINTES[i % TINTES.length] ?? TINTE_BASE;
+}
+---
+
+<section id="servicios" class="servicios py-[var(--spacing-seccion)]">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="servicios__cabecera">
+      <div class="max-w-2xl">
+        <p class="text-xs uppercase tracking-[0.3em] text-tierra-400 mb-5">
+          Tratamientos
+        </p>
+        <h2 class="font-serif text-3xl md:text-4xl text-tierra-900 mb-5">Servicios</h2>
+        <p class="text-tierra-700 leading-relaxed">
+          Terapias manuales y tratamientos estéticos, adaptados a lo que tu cuerpo necesita.
+        </p>
+      </div>
+
+      <a href="/servicios/" class="servicios__ver-todos">
+        Ver todos
+        <svg class="size-3.5" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path
+            d="M2 7h10M8 3l4 4-4 4"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </a>
+    </div>
+
+    <!-- Galería. `--total-franjas` es el único número que manda en el ancho:
+         el CSS reparte con él. El JS solo mueve la clase `is-activa`. -->
+    <div
+      class="galeria"
+      style={`--total-franjas: ${servicios.length}`}
+      data-galeria
+    >
+      {
+        servicios.map((servicio, i) => (
+          <div
+            class:list={['servicio', i === 0 && 'is-activa']}
+            style={`--tinte: ${tinte(i)}`}
+            tabindex="0"
+            role="group"
+            aria-label={servicio.data.nombre}
+          >
+            {/* Capa de color. Cuando haya foto propia, va acá adentro con
+                `object-fit: cover` y el velo sigue encima igual. */}
+            <span class="servicio__fondo" aria-hidden="true"></span>
+            <span class="servicio__velo" aria-hidden="true"></span>
+
+            <span class="servicio__contenido">
+              <span class="servicio__nombre">{servicio.data.nombre}</span>
+              <span class="servicio__detalle">
+                <span class="servicio__descripcion">{servicio.data.descripcion}</span>
+                {servicio.data.duracion.startsWith('[') ? null : (
+                  <span class="servicio__duracion">{servicio.data.duracion}</span>
+                )}
+              </span>
+              {/* Único punto navegable de la franja. Solo existe cuando la
+                  franja está activa: en las quietas el texto va rotado y el
+                  alto disponible es el del nombre. */}
+              <a href={`/servicios/${servicio.data.slug}/`} class="servicio__cta">
+                Ver tratamiento
+                <svg class="size-3.5" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                  <path
+                    d="M2 7h10M8 3l4 4-4 4"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </a>
+            </span>
+          </div>
+        ))
+      }
+    </div>
+
+    <!-- Servicios sin página propia. Es una nota al pie y no una franja más:
+         la galería solo tiene sentido para lo que se puede abrir. Se
+         reorganiza cuando se decida qué pasa con estos. -->
+    {
+      inactivos.length > 0 && (
+        <div class="servicios__otros">
+          <p class="servicios__otros-titulo">También disponible</p>
+          <ul class="servicios__otros-lista">
+            {inactivos.map((servicio) => (
+              <li class="servicios__otros-item">{servicio.data.nombre}</li>
+            ))}
+          </ul>
+          <p class="servicios__otros-nota">
+            Consultá por estos y otros tratamientos por WhatsApp.
+          </p>
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  /* ============================================================
+     BASE MÓVIL — acordeón vertical
+     ============================================================ */
+
+  /* En móvil el eje se invierte: cada franja ocupa el ancho completo y la
+     activa crece en alto. Tres columnas de 25% en una pantalla de 390px darían
+     franjas de 90px, que no aguantan un título.
+
+     El alto va por `height` y no por `flex-grow`: con `flex: 1 1 0` los tres
+     hermanos se reparten el alto del contenedor, y como el contenedor es
+     `auto` la franja activa no tenía de dónde crecer — se quedaba en su alto
+     base y el texto se cortaba. Con un alto explícito, la franja activa manda
+     y el contenedor se estira con ella. */
+  .servicios__cabecera {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .servicios__ver-todos {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    align-self: flex-start;
+    padding-bottom: 3px;
+    border-bottom: 1px solid color-mix(in oklch, var(--color-tierra-900) 25%, transparent);
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-tierra-600);
+    transition:
+      color 0.35s var(--ease-suave),
+      border-color 0.35s var(--ease-suave);
+  }
+
+  .servicios__ver-todos svg {
+    transition: translate 0.35s var(--ease-suave);
+  }
+
+  .galeria {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background-color: color-mix(in oklch, var(--color-tierra-900) 12%, transparent);
+    overflow: hidden;
+    border-radius: 2px;
+  }
+
+  /* La franja. En móvil manda el alto; desde tablet, el ancho. */
+  .servicio {
+    position: relative;
+    display: flex;
+    height: 5rem;
+    overflow: hidden;
+    isolation: isolate;
+    cursor: pointer;
+    transition: height 0.55s var(--ease-suave);
+  }
+
+  .servicio:focus-visible {
+    outline: 2px solid var(--color-tierra-700);
+    outline-offset: -3px;
+  }
+
+  .servicio.is-activa {
+    height: 26rem;
+  }
+
+  /* Capa de color. Es el reemplazo de la foto mientras no haya material
+     propio; con foto, esto pasa a ser el contenedor del `<img>`. */
+  .servicio__fondo {
+    position: absolute;
+    inset: 0;
+    background-color: var(--tinte);
+  }
+
+  /* Velo de marca. En el original es `rgba(190,169,152,.9)` sobre `multiply`:
+     casi tapa la foto en las franjas quietas y deja ver más en la activa, que
+     es de donde sale la sensación de que la franja se "ilumina". */
+  .servicio__velo {
+    position: absolute;
+    inset: 0;
+    background-color: rgb(190 169 152 / 0.9);
+    mix-blend-mode: multiply;
+    transition: background-color 0.55s var(--ease-suave);
+  }
+
+  .servicio.is-activa .servicio__velo {
+    background-color: rgb(190 169 152 / 0.55);
+  }
+
+  .servicio__contenido {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    width: 100%;
+    padding: 1.5rem 1.75rem;
+    text-align: center;
+    color: var(--color-crema-50);
+  }
+
+  /* Título con el subrayado del original: línea de 1px que sigue el ancho del
+     texto, no el de la franja. */
+  .servicio__nombre {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    line-height: 1.2;
+    color: var(--color-crema-50);
+    text-wrap: balance;
+  }
+
+  .servicio__nombre::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -0.6rem;
+    width: 100%;
+    height: 1px;
+    background-color: color-mix(in oklch, var(--color-crema-50) 70%, transparent);
+  }
+
+  /* El detalle vive colapsado en las franjas quietas: `grid-template-rows`
+     de 0fr a 1fr anima un alto que de otro modo habría que calcular, y deja
+     el contenido fuera del flujo visual sin sacarlo del DOM. */
+  .servicio__detalle {
+    display: grid;
+    grid-template-rows: 0fr;
+    max-width: 34rem;
+    opacity: 0;
+    transition:
+      grid-template-rows 0.55s var(--ease-suave),
+      opacity 0.4s var(--ease-suave);
+  }
+
+  .servicio__detalle > * {
+    overflow: hidden;
+  }
+
+  .servicio.is-activa .servicio__detalle {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    transition-delay: 0.12s;
+  }
+
+  .servicio__descripcion {
+    display: block;
+    font-size: 0.875rem;
+    line-height: 1.75;
+    color: color-mix(in oklch, var(--color-crema-50) 82%, transparent);
+  }
+
+  .servicio__duracion {
+    display: block;
+    margin-top: 0.75rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: color-mix(in oklch, var(--color-crema-50) 65%, transparent);
+  }
+
+  /* La franja entera es clickeable (cambia la activa), pero solo el CTA
+     navega. Por eso el CTA no vive dentro de `.servicio__detalle`: aquel se
+     despliega con el ancho de la franja, y este necesita su propio alto. */
+  .servicio__cta {
+    display: none;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1.5rem;
+    padding-bottom: 3px;
+    border-bottom: 1px solid color-mix(in oklch, var(--color-crema-50) 45%, transparent);
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-crema-50);
+  }
+
+  .servicio.is-activa .servicio__cta {
+    display: inline-flex;
+  }
+
+  .servicio__cta svg {
+    transition: translate 0.35s var(--ease-suave);
+  }
+
+  /* ============================================================
+     TABLET Y DESKTOP — acordeón horizontal
+     ============================================================ */
+
+  @media (min-width: 768px) {
+    .servicios__cabecera {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 3rem;
+      margin-bottom: 3.5rem;
+    }
+
+    .servicios__ver-todos {
+      margin-bottom: 0.5rem;
+    }
+
+    .galeria {
+      flex-direction: row;
+      height: 34rem;
+    }
+
+    /* Desde acá el eje se invierte: el alto lo fija la galería y la franja
+       vuelve a repartirse por ancho. Sin `height: auto` las franjas se
+       quedarían con el alto de móvil y no llenarían los 38rem. */
+    .servicio,
+    .servicio.is-activa {
+      height: auto;
+      flex: none;
+      /* El ancho sale del total, igual que en el original: con 3 franjas cada
+         una mide 25% y la activa 50%. */
+      width: calc(100% / (var(--total-franjas) + 1));
+      transition: width 0.55s var(--ease-suave);
+    }
+
+    .servicio.is-activa {
+      width: calc(200% / (var(--total-franjas) + 1));
+    }
+
+    /* Los títulos de las franjas quietas hacen salto de línea y se centran en
+       el ancho que tienen. La franja no crece para acomodarlos: el nombre se
+       reparte en las líneas que necesite dentro de los ~250px de una columna
+       de 25%. */
+    .servicio:not(.is-activa) .servicio__contenido {
+      padding: 2rem 1rem;
+    }
+
+    .servicio.is-activa .servicio__contenido {
+      padding: 2.5rem 3rem;
+    }
+
+    .servicio__nombre {
+      font-size: 1.75rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .galeria {
+      height: 38rem;
+    }
+
+    .servicio__nombre {
+      font-size: 2rem;
+    }
+  }
+
+  /* ============================================================
+     PUNTERO — el hover solo existe donde hay puntero de verdad
+     ============================================================ */
+
+  @media (hover: hover) {
+    /* Se aplica a todas las franjas al pasar el mouse por la galería: la que
+       está bajo el cursor gana el ancho grande y las otras dos se retraen, sin
+       que haga falta que el JS mueva nada. */
+    .galeria:hover .servicio.is-activa {
+      width: calc(100% / (var(--total-franjas) + 1));
+    }
+
+    .galeria:hover .servicio:hover {
+      width: calc(200% / (var(--total-franjas) + 1));
+    }
+
+    .galeria:hover .servicio.is-activa:hover {
+      width: calc(200% / (var(--total-franjas) + 1));
+    }
+
+    /* El resto del revelado acompaña al puntero igual que con el click. */
+    .galeria:hover .servicio.is-activa:not(:hover) .servicio__velo {
+      background-color: rgb(190 169 152 / 0.9);
+    }
+
+    .galeria:hover .servicio:hover .servicio__velo {
+      background-color: rgb(190 169 152 / 0.55);
+    }
+
+    .galeria:hover .servicio.is-activa:not(:hover) .servicio__detalle {
+      grid-template-rows: 0fr;
+      opacity: 0;
+      transition-delay: 0s;
+    }
+
+    .galeria:hover .servicio:hover .servicio__detalle {
+      grid-template-rows: 1fr;
+      opacity: 1;
+      transition-delay: 0.12s;
+    }
+
+    /* El CTA viaja con el puntero, no con la clase: si no, la franja abierta
+       por hover no ofrecería el enlace hasta hacer click. */
+    .galeria:hover .servicio.is-activa:not(:hover) .servicio__cta {
+      display: none;
+    }
+
+    .galeria:hover .servicio:hover .servicio__cta {
+      display: inline-flex;
+    }
+
+    .servicios__ver-todos:hover {
+      color: var(--color-tierra-900);
+      border-color: var(--color-tierra-900);
+    }
+
+    .servicios__ver-todos:hover svg,
+    .servicio:hover .servicio__cta svg {
+      translate: 3px 0;
+    }
+  }
+
+  /* ============================================================
+     SERVICIOS SIN PÁGINA PROPIA
+     ============================================================ */
+
+  .servicios__otros {
+    margin-top: 3.5rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid color-mix(in oklch, var(--color-tierra-900) 12%, transparent);
+  }
+
+  .servicios__otros-titulo {
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--color-tierra-400);
+    margin-bottom: 1.5rem;
+  }
+
+  .servicios__otros-lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 2rem;
+    list-style: none;
+    padding: 0;
+  }
+
+  .servicios__otros-item {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    color: var(--color-tierra-600);
+  }
+
+  .servicios__otros-nota {
+    margin-top: 1.5rem;
+    color: var(--color-tierra-700);
+    line-height: 1.75;
+  }
+
+  @media (min-width: 768px) {
+    .servicios__otros {
+      margin-top: 5rem;
+      padding-top: 3rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .servicio,
+    .servicio__velo,
+    .servicio__detalle,
+    .servicio__cta svg {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * El click mueve la franja activa; el hover lo resuelve el CSS —acá no se
+   * toca— porque necesita saber por dónde va el puntero, y eso el navegador ya
+   * lo sabe.
+   *
+   * El click va por JS y no por CSS: `:target` o radios obligarían a
+   * reestructurar el HTML y a mantener el estado en la URL. El script solo
+   * mueve la clase `is-activa`.
+   *
+   * La franja no navega: el único punto que lleva a la página del servicio es
+   * el CTA de `Ver tratamiento`. Sin JavaScript el bloque igual se lee —la
+   * primera queda abierta, las otras dos con el título rotado— pero los CTA
+   * de las franjas quietas están en `display: none`, así que solo es
+   * navegable el de la primera. Es aceptable: el "Ver todos" de la cabecera
+   * cubre la lista completa.
+   */
+  for (const galeria of document.querySelectorAll<HTMLElement>('[data-galeria]')) {
+    const franjas = Array.from(galeria.querySelectorAll<HTMLElement>('.servicio'));
+
+    for (const franja of franjas) {
+      franja.addEventListener('click', () => {
+        for (const otra of franjas) {
+          otra.classList.toggle('is-activa', otra === franja);
+        }
+      });
+
+      // La franja activa recibe el foco por teclado igual que por click.
+      franja.addEventListener('focus', () => {
+        for (const otra of franjas) {
+          otra.classList.toggle('is-activa', otra === franja);
+        }
+      });
+    }
+  }
+</script>

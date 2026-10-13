@@ -1,13 +1,12 @@
 ---
 import { getCollection } from 'astro:content';
-import { Image } from 'astro:assets';
-import fotoEspalda from '../assets/fotos/masaje-espalda.jpeg';
 import Base from '../layouts/Base.astro';
 import SEO from '../components/SEO.astro';
 import Hero from '../components/Hero.astro';
 import BarraBeneficios from '../components/BarraBeneficios.astro';
 import type { Beneficio } from '../components/BarraBeneficios.astro';
 import IntroCentro from '../components/IntroCentro.astro';
+import SeccionServicios from '../components/SeccionServicios.astro';
 import { SITE, whatsappLink } from '../data/site';
 import { negocioLocal } from '../data/schema';
 import { VARIANTES_HERO, type VarianteHero } from '../data/hero';
@@ -30,7 +29,6 @@ const servicios = (await getCollection('servicios')).sort(
 );
 const activos = servicios.filter((s) => s.data.activo);
 const inactivos = servicios.filter((s) => !s.data.activo);
-const destacado = servicios.find((s) => s.data.prioridad === 1)!;
 
 /** Franja que va dentro de la onda, al pie del hero. */
 const beneficios: Beneficio[] = [
@@ -119,101 +117,7 @@ const faq = [
 
   <IntroCentro />
 
-  <!-- SERVICIOS -->
-  <section id="servicios" class="bg-crema-100 py-[var(--spacing-seccion)]">
-    <div class="max-w-6xl mx-auto px-6">
-      <div class="max-w-2xl mb-14">
-        <h2 class="font-serif text-3xl md:text-4xl text-tierra-900 mb-5">Servicios</h2>
-        <p class="text-tierra-700 leading-relaxed">
-          Terapias manuales y tratamientos estéticos, adaptados a lo que tu cuerpo necesita.
-        </p>
-      </div>
-
-      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {
-          activos.map((servicio) => (
-            <a
-              href={`/servicios/${servicio.data.slug}/`}
-              class="group block bg-crema-50 p-8 rounded-sm border border-tierra-900/8 hover:border-tierra-900/20 hover:shadow-sm transition-all"
-            >
-              <h3 class="font-serif text-2xl text-tierra-900 mb-3 group-hover:text-tierra-600 transition-colors">
-                {servicio.data.nombre}
-              </h3>
-              <p class="text-sm text-tierra-700 leading-relaxed mb-6">
-                {servicio.data.descripcion}
-              </p>
-              <span class="text-sm text-tierra-600 underline underline-offset-4">
-                Ver más
-              </span>
-            </a>
-          ))
-        }
-      </div>
-
-      <div class="mt-14 pt-10 border-t border-tierra-900/10">
-        <p class="text-sm uppercase tracking-[0.2em] text-tierra-500 mb-6">
-          También disponible
-        </p>
-        <ul class="flex flex-wrap gap-x-8 gap-y-3 text-tierra-700">
-          {
-            inactivos.map((servicio) => (
-              <li class="font-serif text-xl text-tierra-600">{servicio.data.nombre}</li>
-            ))
-          }
-        </ul>
-        <p class="text-sm text-tierra-500 mt-6">
-          Consultá por estos y otros tratamientos por WhatsApp.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- DESTACADO: DESCONTRACTURANTE -->
-  <section class="py-[var(--spacing-seccion)]">
-    <div class="max-w-6xl mx-auto px-6 grid gap-14 lg:grid-cols-2 items-center">
-      <div class="relative">
-        {/* La foto es vertical y la caja horizontal, así que se recorta con
-            `object-cover` y se ancla arriba (`object-top`): en el original
-            sobra techo y una pared vacía a la derecha, y el gesto —manos sobre
-            la espalda— vive en el tercio superior. */}
-        <Image
-          src={fotoEspalda}
-          alt="Roxana aplicando un masaje descontracturante sobre la espalda de una clienta"
-          widths={[480, 720, 960]}
-          sizes="(min-width: 1024px) 50vw, 100vw"
-          format="webp"
-          quality={82}
-          class="aspect-[4/3] w-full object-cover object-top rounded-sm"
-        />
-        {/* Cuña en la esquina: el bloque de texto de al lado es claro y la foto
-            tiene paredes blancas en el borde derecho; sin esto los dos se
-            funden y la imagen pierde su borde. */}
-        <div class="pointer-events-none absolute inset-0 rounded-sm ring-1 ring-inset ring-tierra-900/10"></div>
-      </div>
-
-      <div>
-        <p class="text-sm uppercase tracking-[0.25em] text-tierra-500 mb-5">
-          El más solicitado
-        </p>
-        <h2 class="font-serif text-3xl md:text-4xl text-tierra-900 mb-6">
-          {destacado.data.nombre}
-        </h2>
-        <p class="text-tierra-700 leading-relaxed mb-6">
-          {destacado.data.descripcion}
-        </p>
-        <p class="text-tierra-700 leading-relaxed mb-8">
-          [PLACEHOLDER: 2-3 líneas sobre qué resuelve este masaje y a quién ayuda —
-          dolor cervical, contracturas lumbares, tensión por estrés]
-        </p>
-        <a
-          href={`/servicios/${destacado.data.slug}/`}
-          class="inline-block bg-tierra-900 text-crema-50 px-8 py-4 rounded-full hover:bg-tierra-700 transition-colors"
-        >
-          Conocer más
-        </a>
-      </div>
-    </div>
-  </section>
+  <SeccionServicios servicios={activos} inactivos={inactivos} />
 
   <!-- POR QUÉ JADE -->
   <section class="bg-tierra-950 text-crema-100 py-[var(--spacing-seccion)]">
