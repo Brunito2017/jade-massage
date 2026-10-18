@@ -87,7 +87,9 @@ const partes = palabras.map((palabra, i) => ({
       </svg>
     </button>
 
-    <ul class="hidden md:flex items-center gap-9 text-sm site-nav-link site-nav-links">
+    {/* `gap-8` en tablet: con `gap-9`, a 768px el último enlace quedaba a 3px
+        del wordmark centrado. En desktop vuelve al aire original. */}
+    <ul class="hidden md:flex items-center gap-8 lg:gap-9 text-sm site-nav-link site-nav-links">
       <li><a href="/servicios/" class="transition-colors">Servicios</a></li>
       <li><a href="/sobre-roxana/" class="transition-colors">Sobre Roxana</a></li>
       <li><a href="/contacto/" class="transition-colors">Contacto</a></li>

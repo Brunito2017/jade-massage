@@ -1,0 +1,510 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { CATEGORIAS, whatsappLink } from '../data/site';
+import { tinte } from '../data/tintes';
+
+/**
+ * Servicios sin página propia — carrusel horizontal.
+ *
+ * Son los tratamientos que existen pero todavía no tienen ficha: no hay
+ * destino al que enlazar, así que la tarjeta no navega. El CTA de cada una es
+ * WhatsApp, que es el mismo canal que usa el resto del sitio.
+ *
+ * El carrusel es scroll nativo (`overflow-x` + `scroll-snap`), no una librería.
+ * Eso deja el gesto de arrastre en móvil en manos del navegador —con su
+ * inercia y su accesibilidad ya resueltas— y el JS solo mueve los dos botones.
+ * Sin JavaScript el bloque se sigue leyendo y se puede deslizar igual.
+ *
+ * La tarjeta no es una franja de color como las de la galería: acá el color
+ * entra como un tinte muy bajo sobre crema. Son servicios secundarios y no
+ * deben competir con la galería que está justo arriba.
+ */
+
+interface Props {
+  /** Servicios a mostrar, en orden de prioridad. */
+  servicios: CollectionEntry<'servicios'>[];
+  /**
+   * Destino del enlace al pie. Es opcional porque el componente también se usa
+   * en /servicios/, donde "Ver todos" apuntaría a la página actual.
+   */
+  enlaceTodos?: string;
+}
+
+const { servicios, enlaceTodos } = Astro.props;
+---
+
+{
+  servicios.length > 0 && (
+    <section
+      class="mas"
+      data-carrusel
+      aria-labelledby="mas-servicios-titulo"
+    >
+      <div class="mas__cabecera">
+        <div>
+          <h3 id="mas-servicios-titulo" class="mas__titulo">
+            También disponible
+          </h3>
+          <p class="mas__nota">
+            Consultá por estos y otros tratamientos por WhatsApp.
+          </p>
+        </div>
+
+        <div class="mas__controles">
+          <button
+            type="button"
+            class="mas__control"
+            data-carrusel-prev
+            aria-label="Ver servicio anterior"
+            aria-controls="mas-servicios-pista"
+          >
+            <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path
+                d="M12 7H2M6 3 2 7l4 4"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="mas__control"
+            data-carrusel-next
+            aria-label="Ver servicio siguiente"
+            aria-controls="mas-servicios-pista"
+          >
+            <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path
+                d="M2 7h10M8 3l4 4-4 4"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {/* `tabindex="0"` deja el carrusel en el orden de tabulación: con el
+          teclado, las flechas horizontales desplazan la pista sin pasar por
+          los botones. El nombre accesible viene de `aria-label`. */}
+      <ul
+        id="mas-servicios-pista"
+        class="mas__pista"
+        data-carrusel-pista
+        tabindex="0"
+        aria-label="Otros servicios disponibles"
+      >
+        {servicios.map((servicio, i) => (
+          <li class="mas__slide">
+            <article
+              class="tarjeta"
+              style={`--tinte: ${tinte(i)}`}
+            >
+              <div class="tarjeta__meta">
+                <span class="tarjeta__numero">{String(i + 1).padStart(2, '0')}</span>
+                <span class="tarjeta__categoria">
+                  {CATEGORIAS[servicio.data.categoria]}
+                </span>
+              </div>
+
+              <div class="tarjeta__cuerpo">
+                <h4 class="tarjeta__nombre">{servicio.data.nombre}</h4>
+                <p class="tarjeta__descripcion">{servicio.data.descripcion}</p>
+              </div>
+
+              <a
+                class="tarjeta__cta"
+                href={whatsappLink(
+                  `Hola, me interesa el servicio de ${servicio.data.nombre.toLowerCase()}.`
+                )}
+                target="_blank"
+                rel="noopener"
+              >
+                Consultar por WhatsApp
+                <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                  <path
+                    d="M2 7h10M8 3l4 4-4 4"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </a>
+            </article>
+          </li>
+        ))}
+      </ul>
+
+      {
+        enlaceTodos && (
+          <div class="mas__pie">
+            <a class="mas__ver-todos" href={enlaceTodos}>
+              Ver todos los servicios
+              <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path
+                  d="M2 7h10M8 3l4 4-4 4"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+          </div>
+        )
+      }
+    </section>
+  )
+}
+
+<style>
+  /* ============================================================
+     BASE MÓVIL — el ancho de la pista manda
+     ============================================================ */
+
+  .mas {
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid color-mix(in oklch, var(--color-tierra-900) 12%, transparent);
+  }
+
+  .mas__cabecera {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  /* Título de subsección: la misma serif y el mismo tierra-900 que "Servicios",
+     un escalón más abajo para que no compita con la galería que viene arriba. */
+  .mas__titulo {
+    font-size: 1.5rem;
+    line-height: 1.15;
+    color: var(--color-tierra-900);
+  }
+
+  .mas__nota {
+    max-width: 26rem;
+    margin-top: 0.4rem;
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: var(--color-tierra-700);
+  }
+
+  .mas__controles {
+    display: flex;
+    flex: none;
+    gap: 0.5rem;
+  }
+
+  .mas__control {
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid color-mix(in oklch, var(--color-tierra-900) 18%, transparent);
+    border-radius: 999px;
+    background-color: transparent;
+    color: var(--color-tierra-700);
+    transition:
+      background-color 0.35s var(--ease-suave),
+      border-color 0.35s var(--ease-suave),
+      color 0.35s var(--ease-suave),
+      opacity 0.35s var(--ease-suave);
+  }
+
+  .mas__control svg {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+
+  .mas__control:focus-visible {
+    outline: 2px solid var(--color-tierra-700);
+    outline-offset: 2px;
+  }
+
+  .mas__control:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+
+  /* La pista: scroll nativo y snap por tarjeta. La barra se oculta porque el
+     gesto y los botones ya la reemplazan; el scroll sigue existiendo para
+     teclado, trackpad y lector de pantalla. */
+  .mas__pista {
+    display: flex;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .mas__pista::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mas__pista:focus-visible {
+    outline: 2px solid var(--color-tierra-700);
+    outline-offset: 6px;
+  }
+
+  /* 82% deja ver el canto de la siguiente tarjeta: el carrusel se anuncia
+     solo, sin necesidad de flechas ni puntos. */
+  .mas__slide {
+    display: flex;
+    flex: 0 0 82%;
+    scroll-snap-align: start;
+  }
+
+  .tarjeta {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 12.5rem;
+    padding: 1.25rem 1.25rem 1.5rem;
+    border: 1px solid color-mix(in oklch, var(--tinte) 22%, transparent);
+    border-radius: 2px;
+    background-color: color-mix(in oklch, var(--tinte) 9%, var(--color-crema-50));
+    transition:
+      background-color 0.45s var(--ease-suave),
+      border-color 0.45s var(--ease-suave);
+  }
+
+  .tarjeta__meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .tarjeta__numero {
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    line-height: 1;
+    color: color-mix(in oklch, var(--tinte) 75%, var(--color-tierra-700));
+  }
+
+  .tarjeta__categoria {
+    font-size: 0.6rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--color-tierra-500);
+  }
+
+  /* Empuja nombre y descripción al pie para que las tarjetas —de alturas
+     distintas— compartan la línea de texto inferior. */
+  .tarjeta__cuerpo {
+    margin-top: auto;
+    padding-top: 1.25rem;
+  }
+
+  .tarjeta__nombre {
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+    line-height: 1.2;
+    color: var(--color-tierra-900);
+    text-wrap: balance;
+  }
+
+  .tarjeta__descripcion {
+    max-width: 22rem;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--color-tierra-700);
+  }
+
+  .tarjeta__cta {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    gap: 0.4rem;
+    margin-top: 1rem;
+    padding-bottom: 3px;
+    border-bottom: 1px solid color-mix(in oklch, var(--color-tierra-900) 25%, transparent);
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-tierra-900);
+    transition: border-color 0.35s var(--ease-suave);
+  }
+
+  .tarjeta__cta svg {
+    width: 0.8rem;
+    height: 0.8rem;
+    transition: translate 0.35s var(--ease-suave);
+  }
+
+  .tarjeta__cta:focus-visible {
+    outline: 2px solid var(--color-tierra-700);
+    outline-offset: 4px;
+  }
+
+  /* Cierre del bloque. Se alinea a la derecha para continuar el eje de las
+     flechas y no competir con el título de la izquierda. */
+  .mas__pie {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.25rem;
+  }
+
+  .mas__ver-todos {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 3px;
+    border-bottom: 1px solid color-mix(in oklch, var(--color-tierra-900) 25%, transparent);
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-tierra-600);
+    transition:
+      color 0.35s var(--ease-suave),
+      border-color 0.35s var(--ease-suave);
+  }
+
+  .mas__ver-todos svg {
+    width: 0.875rem;
+    height: 0.875rem;
+    transition: translate 0.35s var(--ease-suave);
+  }
+
+  .mas__ver-todos:focus-visible {
+    outline: 2px solid var(--color-tierra-700);
+    outline-offset: 4px;
+  }
+
+  /* ============================================================
+     TABLET Y DESKTOP — tarjetas más anchas, menos por pantalla
+     ============================================================ */
+
+  @media (min-width: 768px) {
+    .mas {
+      margin-top: 3.5rem;
+      padding-top: 2.5rem;
+    }
+
+    .mas__titulo {
+      font-size: 1.875rem;
+    }
+
+    .mas__cabecera {
+      margin-bottom: 1.5rem;
+    }
+
+    .mas__slide {
+      flex-basis: 55%;
+    }
+
+    .tarjeta {
+      min-height: 13.5rem;
+      padding: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    /* 30rem deja dos tarjetas completas y el canto de la tercera dentro del
+       contenedor de 6xl: el carrusel sigue teniendo sentido de escritorio. */
+    .mas__slide {
+      flex-basis: 30rem;
+    }
+
+    .tarjeta {
+      min-height: 14rem;
+      padding: 1.5rem 1.75rem;
+    }
+  }
+
+  /* ============================================================
+     PUNTERO — el hover solo existe donde hay puntero de verdad
+     ============================================================ */
+
+  @media (hover: hover) {
+    .mas__control:hover:not(:disabled) {
+      border-color: var(--color-tierra-900);
+      background-color: var(--color-tierra-900);
+      color: var(--color-crema-50);
+    }
+
+    .tarjeta:hover {
+      border-color: color-mix(in oklch, var(--tinte) 34%, transparent);
+      background-color: color-mix(in oklch, var(--tinte) 14%, var(--color-crema-50));
+    }
+
+    .tarjeta:hover .tarjeta__cta svg {
+      translate: 3px 0;
+    }
+
+    .mas__ver-todos:hover {
+      color: var(--color-tierra-900);
+      border-color: var(--color-tierra-900);
+    }
+
+    .mas__ver-todos:hover svg {
+      translate: 3px 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mas__control,
+    .tarjeta,
+    .tarjeta__cta svg,
+    .mas__ver-todos svg {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Los botones avanzan una tarjeta completa —ancho + separación—, y se
+   * deshabilitan en los extremos: el carrusel no da la vuelta.
+   *
+   * `scrollBy` con `behavior: smooth` ignora la preferencia de movimiento
+   * reducido, así que se consulta acá y se cae a `auto` cuando corresponde.
+   */
+  for (const pista of document.querySelectorAll<HTMLElement>('[data-carrusel-pista]')) {
+    const contenedor = pista.closest<HTMLElement>('[data-carrusel]');
+    if (!contenedor) continue;
+
+    const anterior = contenedor.querySelector<HTMLButtonElement>('[data-carrusel-prev]');
+    const siguiente = contenedor.querySelector<HTMLButtonElement>('[data-carrusel-next]');
+    const slides = Array.from(pista.children);
+    const suave = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ? 'auto'
+      : 'smooth';
+
+    const paso = () => {
+      const slide = slides[0];
+      if (!slide) return pista.clientWidth;
+      const separacion = Number.parseFloat(getComputedStyle(pista).columnGap) || 0;
+      return slide.getBoundingClientRect().width + separacion;
+    };
+
+    const actualizar = () => {
+      const tope = pista.scrollWidth - pista.clientWidth;
+      if (anterior) anterior.disabled = pista.scrollLeft <= 1;
+      if (siguiente) siguiente.disabled = pista.scrollLeft >= tope - 1;
+    };
+
+    anterior?.addEventListener('click', () => {
+      pista.scrollBy({ left: -paso(), behavior: suave });
+    });
+
+    siguiente?.addEventListener('click', () => {
+      pista.scrollBy({ left: paso(), behavior: suave });
+    });
+
+    pista.addEventListener('scroll', actualizar, { passive: true });
+    actualizar();
+  }
+</script>

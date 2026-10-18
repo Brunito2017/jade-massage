@@ -7,8 +7,11 @@ import BarraBeneficios from '../components/BarraBeneficios.astro';
 import type { Beneficio } from '../components/BarraBeneficios.astro';
 import IntroCentro from '../components/IntroCentro.astro';
 import SeccionServicios from '../components/SeccionServicios.astro';
+import SobreRoxana from '../components/SobreRoxana.astro';
+import PreguntasFrecuentes from '../components/PreguntasFrecuentes.astro';
+import CtaFinal from '../components/CtaFinal.astro';
 import { SITE, whatsappLink } from '../data/site';
-import { negocioLocal } from '../data/schema';
+import { faqSchema, negocioLocal } from '../data/schema';
 import { VARIANTES_HERO, type VarianteHero } from '../data/hero';
 
 /** Variante de hero elegida para la home. */
@@ -37,62 +40,58 @@ const beneficios: Beneficio[] = [
   { icono: 'corazon', texto: 'Tu bienestar, primero' },
 ];
 
-const pasos = [
-  {
-    numero: '01',
-    titulo: 'Consulta inicial',
-    texto: 'Conversamos sobre tus molestias, tu historial y qué esperás de la sesión.',
-  },
-  {
-    numero: '02',
-    titulo: 'Evaluación',
-    texto: 'Se identifica la zona a tratar y se define el enfoque más adecuado.',
-  },
-  {
-    numero: '03',
-    titulo: 'La sesión',
-    texto: '[PLACEHOLDER: describir el ambiente y el desarrollo del masaje]',
-  },
-  {
-    numero: '04',
-    titulo: 'Recomendaciones',
-    texto: '[PLACEHOLDER: indicaciones posteriores y autocuidado]',
-  },
-];
-
+/**
+ * Diferenciadores. Viven dentro de "Sobre Roxana" y no en una sección aparte:
+ * el argumento de Jade es quién atiende, y separarlos de la persona los
+ * volvía una lista de virtudes abstractas.
+ */
 const motivos = [
   {
     titulo: 'Enfoque clínico',
-    texto: '[PLACEHOLDER: qué diferencia el trabajo de Roxana de un masaje genérico]',
+    texto:
+      'Cada sesión parte de una evaluación: se identifica la zona a tratar y se define el enfoque antes de empezar.',
   },
   {
     titulo: 'Atención personalizada',
-    texto: '[PLACEHOLDER: cómo se adapta cada sesión a la persona]',
+    texto:
+      'No hay un protocolo fijo. El trabajo se adapta a cómo llegás ese día y a lo que tu cuerpo necesita.',
   },
   {
-    titulo: 'Espacio de desconexión',
-    texto: '[PLACEHOLDER: descripción del ambiente del espacio]',
+    titulo: 'Un espacio de calma',
+    texto:
+      'Un ambiente tranquilo y con hora agendada, para que la sesión sea un paréntesis real en la semana.',
   },
 ];
 
+/**
+ * Preguntas reales, sin placeholders: cada respuesta resuelve una duda que
+ * frena la reserva (ubicación, agenda, precio, elección del servicio). El
+ * mismo arreglo alimenta el bloque visible y el JSON-LD de FAQPage.
+ */
 const faq = [
   {
     pregunta: '¿Dónde queda Jade Belleza y Spa?',
-    respuesta: `En ${SITE.comuna}, Santiago. Por ahora coordinamos la dirección exacta al agendar.`,
+    respuesta: `En ${SITE.direccion.calle}, ${SITE.direccion.comuna}, Santiago. Atendemos con hora agendada.`,
   },
   {
     pregunta: '¿Cómo agendo una hora?',
-    respuesta: 'Escríbenos por WhatsApp al ' + SITE.telefono + ' y coordinamos día y horario.',
+    respuesta: `Escribinos por WhatsApp al ${SITE.telefono} y coordinamos día y horario.`,
   },
   {
     pregunta: '¿Cuánto cuestan los servicios?',
-    respuesta: 'Los valores se consultan directamente por WhatsApp, según el servicio y la zona a tratar.',
+    respuesta:
+      'Los valores se consultan directamente por WhatsApp, según el servicio y la zona a tratar.',
   },
   {
-    pregunta: '¿Necesito preparar algo antes de la sesión?',
-    respuesta: '[PLACEHOLDER: indicaciones previas — ej: llegar descansada, no venir en ayunas]',
+    pregunta: '¿No sabés qué servicio elegir?',
+    respuesta:
+      'Escribinos y te orientamos: contanos qué molestias tenés y te proponemos el tratamiento más adecuado.',
   },
 ];
+
+/** El negocio va siempre; el FAQPage solo si hay preguntas. */
+const faqLd = faqSchema(faq);
+const schema = faqLd ? [negocioLocal(), faqLd] : [negocioLocal()];
 ---
 
 <Base heroTransparente={VARIANTES_HERO[varianteHero].headerTransparente}>
@@ -100,7 +99,7 @@ const faq = [
     slot="head"
     titulo={titulo}
     descripcion={descripcion}
-    schema={negocioLocal()}
+    schema={schema}
   />
 
   <Hero
@@ -119,146 +118,9 @@ const faq = [
 
   <SeccionServicios servicios={activos} inactivos={inactivos} />
 
-  <!-- POR QUÉ JADE -->
-  <section class="bg-tierra-950 text-crema-100 py-[var(--spacing-seccion)]">
-    <div class="max-w-6xl mx-auto px-6">
-      <h2 class="font-serif text-3xl md:text-4xl text-crema-50 mb-14 max-w-2xl">
-        Por qué elegir Jade
-      </h2>
-      <div class="grid gap-10 md:grid-cols-3">
-        {
-          motivos.map((motivo) => (
-            <div>
-              <h3 class="font-serif text-xl text-crema-50 mb-4">{motivo.titulo}</h3>
-              <p class="text-sm text-crema-200/70 leading-relaxed">{motivo.texto}</p>
-            </div>
-          ))
-        }
-      </div>
-    </div>
-  </section>
+  <SobreRoxana motivos={motivos} />
 
-  <!-- CÓMO ES UNA SESIÓN -->
-  <section class="py-[var(--spacing-seccion)]">
-    <div class="max-w-6xl mx-auto px-6">
-      <div class="max-w-2xl mb-14">
-        <h2 class="font-serif text-3xl md:text-4xl text-tierra-900 mb-5">
-          Cómo es una sesión
-        </h2>
-        <p class="text-tierra-700 leading-relaxed">
-          Desde que llegás hasta que te vas, así se desarrolla el encuentro.
-        </p>
-      </div>
+  <PreguntasFrecuentes items={faq} />
 
-      <ol class="grid gap-8 md:grid-cols-4">
-        {
-          pasos.map((paso) => (
-            <li>
-              <p class="font-serif text-4xl text-tierra-300 mb-4">{paso.numero}</p>
-              <h3 class="font-serif text-lg text-tierra-900 mb-3">{paso.titulo}</h3>
-              <p class="text-sm text-tierra-700 leading-relaxed">{paso.texto}</p>
-            </li>
-          ))
-        }
-      </ol>
-    </div>
-  </section>
-
-  <!-- SOBRE ROXANA -->
-  <section class="bg-crema-100 py-[var(--spacing-seccion)]">
-    <div class="max-w-6xl mx-auto px-6 grid gap-14 lg:grid-cols-2 items-center">
-      <div>
-        <p class="text-sm uppercase tracking-[0.25em] text-tierra-500 mb-5">
-          Quién te atiende
-        </p>
-        <h2 class="font-serif text-3xl md:text-4xl text-tierra-900 mb-6">Roxana</h2>
-        <p class="text-tierra-700 leading-relaxed mb-6">
-          Masoterapeuta clínica y esteticista integral.
-        </p>
-        <p class="text-tierra-700 leading-relaxed mb-8">
-          [PLACEHOLDER: 3-4 líneas sobre su formación, su enfoque y por qué abrió Jade.
-          Ver /sobre-roxana/ para la lista completa de datos a completar.]
-        </p>
-        <a
-          href="/sobre-roxana/"
-          class="inline-block border border-tierra-900/25 text-tierra-900 px-8 py-4 rounded-full hover:bg-tierra-900 hover:text-crema-50 transition-colors"
-        >
-          Conocer a Roxana
-        </a>
-      </div>
-
-      <div class="bg-tierra-200 aspect-[4/5] rounded-sm grid place-items-center">
-        <!-- PLACEHOLDER: foto real de Roxana — no stock -->
-        <p class="text-tierra-500 text-sm tracking-widest uppercase px-6 text-center">
-          [Imagen: retrato de Roxana trabajando]
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- TESTIMONIOS -->
-  <section class="py-[var(--spacing-seccion)]">
-    <div class="max-w-6xl mx-auto px-6">
-      <h2 class="font-serif text-3xl md:text-4xl text-tierra-900 mb-14">
-        Lo que dicen nuestras clientas
-      </h2>
-      <div class="grid gap-8 md:grid-cols-3">
-        {
-          [1, 2, 3].map(() => (
-            <blockquote class="bg-crema-100 p-8 rounded-sm border border-tierra-900/8">
-              <p class="text-tierra-700 leading-relaxed mb-6 italic">
-                [PLACEHOLDER: reseña real de una clienta — no inventar. Pedir a Roxana
-                que reúna 2-3 testimonios con permiso.]
-              </p>
-              <footer class="text-sm text-tierra-500">— [Nombre]</footer>
-            </blockquote>
-          ))
-        }
-      </div>
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section class="bg-crema-100 py-[var(--spacing-seccion)]">
-    <div class="max-w-3xl mx-auto px-6">
-      <h2 class="font-serif text-3xl md:text-4xl text-tierra-900 mb-14">
-        Preguntas frecuentes
-      </h2>
-      <div class="space-y-2">
-        {
-          faq.map((item) => (
-            <details class="group bg-crema-50 rounded-sm border border-tierra-900/8">
-              <summary class="cursor-pointer list-none px-6 py-5 flex justify-between items-center gap-4 font-serif text-lg text-tierra-900">
-                {item.pregunta}
-                <span class="text-tierra-400 group-open:rotate-45 transition-transform text-2xl leading-none">
-                  +
-                </span>
-              </summary>
-              <p class="px-6 pb-6 text-tierra-700 leading-relaxed">{item.respuesta}</p>
-            </details>
-          ))
-        }
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA FINAL -->
-  <section class="max-w-6xl mx-auto px-6 py-[var(--spacing-seccion)]">
-    <div class="bg-tierra-900 rounded-sm px-8 py-20 md:px-20 text-center">
-      <h2 class="font-serif text-3xl md:text-5xl text-crema-50 mb-6">
-        Regalate un momento
-      </h2>
-      <p class="text-crema-200/80 leading-relaxed mb-10 max-w-xl mx-auto">
-        Escríbenos y coordinamos el día y la hora que mejor te acomode.
-      </p>
-      <a
-        href={whatsappLink('Hola, me gustaría agendar una hora.')}
-        target="_blank"
-        rel="noopener"
-        class="inline-block bg-crema-50 text-tierra-900 px-10 py-4 rounded-full hover:bg-crema-200 transition-colors"
-      >
-        {SITE.telefono}
-      </a>
-    </div>
-  </section>
+  <CtaFinal />
 </Base>

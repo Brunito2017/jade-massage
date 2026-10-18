@@ -1,0 +1,261 @@
+---
+import { SITE, whatsappLink } from '../data/site';
+
+/**
+ * Cierre de la home.
+ *
+ * Banda oscura a sangre: es el único bloque de la página que no comparte el
+ * margen del contenedor, así el final se lee como un corte y no como una
+ * tarjeta más. Además de la invitación, concentra los datos de contacto que
+ * antes no aparecían en la home —dirección exacta, teléfono e Instagram—,
+ * que es lo que necesita una persona que ya decidió venir.
+ */
+---
+
+<section class="cierre" aria-labelledby="cierre-titulo">
+  <div class="cierre__grid">
+    <div class="cierre__texto">
+      <p class="cierre__eyebrow">
+        {SITE.direccion.comuna}, Santiago
+      </p>
+      <h2 id="cierre-titulo" class="cierre__titulo">
+        Regalate<br />un momento
+      </h2>
+      <p class="cierre__nota">
+        Escríbenos y coordinamos el día y la hora que mejor te acomode.
+      </p>
+    </div>
+
+    <div class="cierre__contacto">
+      <a
+        class="cierre__boton"
+        href={whatsappLink('Hola, me gustaría agendar una hora.')}
+        target="_blank"
+        rel="noopener"
+      >
+        Agendar por WhatsApp
+        <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path
+            d="M2 7h10M8 3l4 4-4 4"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </a>
+
+      <address class="cierre__datos">
+        <a class="cierre__telefono" href={`tel:${SITE.telefonoLink}`}>
+          {SITE.telefono}
+        </a>
+        <p class="cierre__direccion">
+          {SITE.direccion.calle}<br />
+          {SITE.direccion.comuna}, Santiago
+        </p>
+        <a
+          class="cierre__instagram"
+          href={SITE.instagram}
+          target="_blank"
+          rel="noopener"
+        >
+          Instagram
+          <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path
+              d="M2 7h10M8 3l4 4-4 4"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </a>
+      </address>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ============================================================
+     BASE MÓVIL
+     ============================================================ */
+
+  .cierre {
+    padding-block: 4.5rem;
+    background-color: var(--color-tierra-900);
+    color: var(--color-crema-100);
+  }
+
+  .cierre__grid {
+    display: grid;
+    gap: 2.5rem;
+    width: 100%;
+    max-width: 72rem;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+
+  .cierre__eyebrow {
+    margin-bottom: 1rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: color-mix(in oklch, var(--color-crema-50) 55%, transparent);
+  }
+
+  .cierre__titulo {
+    font-size: clamp(2.75rem, 10vw, 4.5rem);
+    line-height: 0.98;
+    letter-spacing: -0.015em;
+    color: var(--color-crema-50);
+    text-wrap: balance;
+  }
+
+  .cierre__nota {
+    max-width: 26rem;
+    margin-top: 1.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: color-mix(in oklch, var(--color-crema-50) 65%, transparent);
+  }
+
+  .cierre__contacto {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+    padding-top: 2rem;
+    border-top: 1px solid color-mix(in oklch, var(--color-crema-50) 15%, transparent);
+  }
+
+  .cierre__boton {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    gap: 0.6rem;
+    padding: 1rem 1.75rem;
+    border-radius: 999px;
+    background-color: var(--color-crema-50);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-tierra-900);
+    transition:
+      background-color 0.35s var(--ease-suave),
+      translate 0.35s var(--ease-suave);
+  }
+
+  .cierre__boton svg {
+    width: 0.9rem;
+    height: 0.9rem;
+    transition: translate 0.35s var(--ease-suave);
+  }
+
+  .cierre__boton:focus-visible,
+  .cierre__telefono:focus-visible,
+  .cierre__instagram:focus-visible {
+    outline: 2px solid var(--color-crema-50);
+    outline-offset: 4px;
+  }
+
+  .cierre__datos {
+    display: grid;
+    justify-items: start;
+    gap: 0.75rem;
+    font-style: normal;
+  }
+
+  .cierre__telefono {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    line-height: 1.2;
+    color: var(--color-crema-50);
+    transition: color 0.3s var(--ease-suave);
+  }
+
+  .cierre__direccion {
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: color-mix(in oklch, var(--color-crema-50) 60%, transparent);
+  }
+
+  .cierre__instagram {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding-bottom: 3px;
+    border-bottom: 1px solid color-mix(in oklch, var(--color-crema-50) 30%, transparent);
+    font-size: 0.7rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: color-mix(in oklch, var(--color-crema-50) 60%, transparent);
+    transition:
+      color 0.3s var(--ease-suave),
+      border-color 0.3s var(--ease-suave);
+  }
+
+  .cierre__instagram svg {
+    width: 0.75rem;
+    height: 0.75rem;
+    transition: translate 0.35s var(--ease-suave);
+  }
+
+  /* ============================================================
+     ESCRITORIO — invitación a la izquierda, contacto al pie de la derecha
+     ============================================================ */
+
+  @media (min-width: 1024px) {
+    .cierre {
+      padding-block: 7rem;
+    }
+
+    .cierre__grid {
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+      align-items: end;
+      gap: 5rem;
+    }
+
+    .cierre__contacto {
+      padding-top: 0;
+      padding-left: 3rem;
+      border-top: 0;
+      border-left: 1px solid color-mix(in oklch, var(--color-crema-50) 15%, transparent);
+    }
+
+    .cierre__nota {
+      margin-top: 2rem;
+    }
+  }
+
+  @media (hover: hover) {
+    .cierre__boton:hover {
+      background-color: var(--color-crema-200);
+    }
+
+    .cierre__boton:hover svg {
+      translate: 3px 0;
+    }
+
+    .cierre__telefono:hover {
+      color: var(--color-crema-200);
+    }
+
+    .cierre__instagram:hover {
+      color: var(--color-crema-50);
+      border-color: var(--color-crema-50);
+    }
+
+    .cierre__instagram:hover svg {
+      translate: 3px 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cierre__boton,
+    .cierre__boton svg,
+    .cierre__telefono,
+    .cierre__instagram,
+    .cierre__instagram svg {
+      transition: none;
+    }
+  }
+</style>

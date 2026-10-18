@@ -1,0 +1,277 @@
+---
+/**
+ * Sobre Roxana — bloque de confianza de la home.
+ *
+ * Absorbe lo que antes eran dos secciones separadas ("Por qué elegir Jade" y
+ * "Sobre Roxana"): los tres diferenciadores viven acá, al lado de la persona
+ * que los sostiene. Es más corto que las dos secciones juntas y más honesto:
+ * el argumento no es la marca, es quién atiende.
+ *
+ * La foto todavía no existe. El bloque verde ocupa su lugar y conserva la
+ * composición; cuando llegue una foto propia alcanza con reemplazar el
+ * elemento vacío por un `<img>` con `object-fit: cover`. El verde es el mismo
+ * del tinte de la galería, así no aparece un color nuevo en la página.
+ */
+interface Motivo {
+  titulo: string;
+  texto: string;
+}
+
+interface Props {
+  motivos: Motivo[];
+}
+
+const { motivos } = Astro.props;
+---
+
+<section class="roxana" aria-labelledby="roxana-titulo">
+  <div class="roxana__grid">
+    <div class="roxana__media" aria-hidden="true"></div>
+
+    <div class="roxana__texto">
+      <p class="roxana__eyebrow">Quién te atiende</p>
+      <h2 id="roxana-titulo" class="roxana__titulo">Roxana</h2>
+      <p class="roxana__bio">Masoterapeuta clínica y esteticista integral.</p>
+      <p class="roxana__parrafo">
+        Atiende cada sesión de principio a fin: evalúa la zona, elige la técnica y
+        ajusta el trabajo a cómo llegás ese día. Jade nace de esa forma de trabajar
+        —sin protocolos fijos, con tiempo real para cada persona.
+      </p>
+
+      <ol class="motivos">
+        {
+          motivos.map((motivo, i) => (
+            <li class="motivos__item">
+              <span class="motivos__num" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <div>
+                <h3 class="motivos__titulo">{motivo.titulo}</h3>
+                <p class="motivos__texto">{motivo.texto}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+
+      <a href="/sobre-roxana/" class="roxana__enlace">
+        Conocer a Roxana
+        <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path
+            d="M2 7h10M8 3l4 4-4 4"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ============================================================
+     BASE MÓVIL
+     ============================================================ */
+
+  .roxana {
+    background-color: var(--color-crema-100);
+    padding-block: var(--spacing-seccion);
+  }
+
+  .roxana__grid {
+    display: grid;
+    gap: 2.5rem;
+    width: 100%;
+    max-width: 72rem;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+
+  /* PROVISIONAL: reemplazo de la foto de Roxana. Un plano de color y nada
+     más — sin texto ni ícono encima. */
+  .roxana__media {
+    aspect-ratio: 16 / 10;
+    border-radius: 2px;
+    background-color: #6f7a63;
+  }
+
+  .roxana__eyebrow {
+    margin-bottom: 0.9rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--color-tierra-400);
+  }
+
+  .roxana__titulo {
+    margin-bottom: 0.6rem;
+    font-size: clamp(2.25rem, 6vw, 3rem);
+    line-height: 1.05;
+    color: var(--color-tierra-900);
+  }
+
+  .roxana__bio {
+    margin-bottom: 1.25rem;
+    font-size: 1rem;
+    color: var(--color-tierra-600);
+  }
+
+  .roxana__parrafo {
+    max-width: 40rem;
+    margin-bottom: 2rem;
+    font-size: 0.9375rem;
+    line-height: 1.75;
+    color: var(--color-tierra-700);
+  }
+
+  /* Lista de diferenciadores. Filas con hairline en vez de tarjetas: el
+     contenido es corto y las tarjetas le darían un peso que no tiene. */
+  .motivos {
+    margin: 0 0 2rem;
+    padding: 0;
+    border-top: 1px solid color-mix(in oklch, var(--color-tierra-900) 12%, transparent);
+    list-style: none;
+  }
+
+  .motivos__item {
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    gap: 0.25rem 0.75rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid color-mix(in oklch, var(--color-tierra-900) 12%, transparent);
+  }
+
+  .motivos__num {
+    padding-top: 0.2rem;
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    line-height: 1;
+    color: var(--color-tierra-400);
+  }
+
+  .motivos__titulo {
+    margin-bottom: 0.3rem;
+    font-size: 1.05rem;
+    line-height: 1.3;
+    color: var(--color-tierra-900);
+  }
+
+  .motivos__texto {
+    max-width: 36rem;
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: var(--color-tierra-700);
+  }
+
+  /* Enlace con subrayado que crece desde la izquierda, el mismo gesto que usa
+     la intro y el logo del header. */
+  .roxana__enlace {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding-bottom: 2px;
+    font-size: 0.875rem;
+    letter-spacing: 0.04em;
+    color: var(--color-tierra-700);
+    transition: color 0.3s var(--ease-suave);
+  }
+
+  .roxana__enlace::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s var(--ease-suave);
+  }
+
+  .roxana__enlace svg {
+    width: 0.875rem;
+    height: 0.875rem;
+    transition: translate 0.4s var(--ease-suave);
+  }
+
+  .roxana__enlace:focus-visible {
+    outline: 2px solid var(--color-tierra-700);
+    outline-offset: 4px;
+  }
+
+  /* ============================================================
+     ESCRITORIO — la foto y el texto se ponen lado a lado
+     ============================================================ */
+
+  @media (min-width: 1024px) {
+    .roxana__grid {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      align-items: center;
+      gap: 4rem;
+    }
+
+    .roxana__media {
+      aspect-ratio: 4 / 5;
+    }
+
+    .motivos__item {
+      padding: 1.1rem 0;
+    }
+  }
+
+  @media (hover: hover) {
+    .roxana__enlace:hover {
+      color: var(--color-tierra-900);
+    }
+
+    .roxana__enlace:hover::after {
+      transform: scaleX(1);
+    }
+
+    .roxana__enlace:hover svg {
+      translate: 3px 0;
+    }
+  }
+
+  /* Entrada al hacer scroll. Es una mejora progresiva: donde el navegador no
+     soporta `animation-timeline`, el bloque se ve completo desde el principio. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .roxana__media,
+      .roxana__texto {
+        animation: roxana-entra linear both;
+        animation-timeline: view();
+        animation-range: entry 10% cover 28%;
+      }
+
+      .roxana__texto {
+        animation-name: roxana-entra-texto;
+      }
+    }
+  }
+
+  @keyframes roxana-entra {
+    from {
+      opacity: 0.3;
+      scale: 1.02;
+    }
+  }
+
+  @keyframes roxana-entra-texto {
+    from {
+      opacity: 0;
+      translate: 0 1.25rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .roxana__enlace::after,
+    .roxana__enlace svg {
+      transition: none;
+    }
+  }
+</style>

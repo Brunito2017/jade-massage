@@ -1,0 +1,425 @@
+---
+import { whatsappLink } from '../data/site';
+
+/**
+ * Preguntas frecuentes de la home.
+ *
+ * Dos columnas en escritorio: a la izquierda la presentación queda fija
+ * (`sticky`) mientras se abren las respuestas, así el título no se pierde
+ * cuando la lista es más alta que la ventana. En móvil la columna se apila.
+ *
+ * Las preguntas van en un `<details>` nativo: se abren sin JavaScript, el
+ * teclado y los lectores de pantalla ya saben cómo tratarlas y el contenido
+ * queda en el HTML —lo que importa para una página que vive del SEO—.
+ */
+interface Item {
+  pregunta: string;
+  respuesta: string;
+}
+
+interface Props {
+  items: Item[];
+}
+
+const { items } = Astro.props;
+---
+
+<section class="faq" aria-labelledby="faq-titulo">
+  {/* PRUEBA: bambú decorativo en la esquina inferior izquierda. Es puramente
+      ornamental — `aria-hidden`, sin foco y sin capturar el puntero. Vive en la
+      franja que queda libre debajo de la columna de presentación, así no cruza
+      ningún texto. En móvil no se muestra: ahí no hay espacio libre y competiría
+      con el contenido. */}
+  <div class="faq__decoracion" aria-hidden="true">
+    <svg
+      viewBox="0 0 420 200"
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      {/* Tallos */}
+      <g stroke-width="1.6">
+        <path d="M62 200C56 168 64 136 58 104 54 84 58 62 64 46" />
+        <path d="M126 200C132 174 120 146 128 118 134 96 126 76 130 58" />
+        <path d="M188 200C182 182 194 162 188 142 184 128 190 112 192 98" />
+        <path d="M254 200C260 186 250 172 256 158 260 148 256 140 258 132" />
+      </g>
+
+      {/* Nudos */}
+      <g stroke-width="1.1" opacity="0.8">
+        <path d="M55 168h14M61 136h12M55 104h13M57 77h12M61 54h11" />
+        <path d="M119 174h13M124 146h12M129 118h12M127 96h12M127 72h11" />
+        <path d="M183 182h12M189 162h11M183 142h12M187 124h11" />
+        <path d="M251 186h12M252 172h11M256 158h11" />
+      </g>
+
+      {/* Ramitas que sostienen las hojas */}
+      <g stroke-width="1.2">
+        <path d="M64 46C78 36 94 34 108 36" />
+        <path d="M58 104C42 98 30 94 18 94" />
+        <path d="M130 58C145 48 160 46 174 50" />
+        <path d="M128 118C112 114 100 110 90 108" />
+        <path d="M192 98C206 90 220 88 232 92" />
+        <path d="M258 132C270 126 282 126 292 130" />
+      </g>
+
+      {/* Hojas: mismo trazo de línea que el resto del sitio, sin relleno */}
+      <g stroke-width="1.2">
+        <g transform="translate(108 36) rotate(-52) scale(.9)">
+          <path d="M0 0C16-9 36-11 54-4 36 4 16 7 0 0Z" />
+          <path d="M2 0H44" stroke-width=".8" />
+        </g>
+        <g transform="translate(104 40) rotate(-18) scale(.95)">
+          <path d="M0 0C16-9 36-11 54-4 36 4 16 7 0 0Z" />
+          <path d="M2 0H44" stroke-width=".8" />
+        </g>
+        <g transform="translate(100 46) rotate(14) scale(.85)">
+          <path d="M0 0C16-9 36-11 54-4 36 4 16 7 0 0Z" />
+          <path d="M2 0H44" stroke-width=".8" />
+        </g>
+        <g transform="translate(64 46) rotate(-88) scale(.8)">
+          <path d="M0 0C16-9 36-11 54-4 36 4 16 7 0 0Z" />
+          <path d="M2 0H44" stroke-width=".8" />
+        </g>
+
+        <g transform="translate(18 94) rotate(168) scale(.9)">
+          <path d="M0 0C16-9 36-11 54-4 36 4 16 7 0 0Z" />
+          <path d="M2 0H44" stroke-width=".8" />
+        </g>
+        <g transform="translate(20 88) rotate(206) scale(.85)">
+          <path d="M0 0C16-9 36-11 54-4 36 4 16 7 0 0Z" />
+          <path d="M2 0H44" stroke-width=".8" />
+        </g>
+        <g transform="translate(24 100) rotate(140) scale(.8)">
+          <path d="M0 0C16-9 36-11 54-4 36 4 16 7 0 0Z" />
+          <path d="M2 0H44" stroke-width=".8" />
+        </g>
+
+        <g transform="translate(174 50) rotate(-45) scale(.9)">
+          <path d="M0 0C16-9 36-11 54-4 36 4 16 7 0 0Z" />
+          <path d="M2 0H44" stroke-width=".8" />
+        </g>
+        <g transform="translate(170 54) rotate(-8) scale(.95)">
+          <path d="M0 0C16-9 36-11 54-4 36 4 16 7 0 0Z" />
+          <path d="M2 0H44" stroke-width=".8" />
+        </g>
+        <g transform="translate(166 60) rotate(28) scale(.85)">
+          <path d="M0 0C16-9 36-11 54-4 36 4 16 7 0 0Z" />
+          <path d="M2 0H44" stroke-width=".8" />
+        </g>
+
+        <g transform="translate(90 108) rotate(172) scale(.85)">
+          <path d="M0 0C16-9 36-11 54-4 36 4 16 7 0 0Z" />
+          <path d="M2 0H44" stroke-width=".8" />
+        </g>
+        <g transform="translate(92 102) rotate(210) scale(.8)">
+          <path d="M0 0C16-9 36-11 54-4 36 4 16 7 0 0Z" />
+          <path d="M2 0H44" stroke-width=".8" />
+        </g>
+
+        <g transform="translate(232 92) rotate(-40) scale(.85)">
+          <path d="M0 0C16-9 36-11 54-4 36 4 16 7 0 0Z" />
+          <path d="M2 0H44" stroke-width=".8" />
+        </g>
+        <g transform="translate(228 97) rotate(-4) scale(.9)">
+          <path d="M0 0C16-9 36-11 54-4 36 4 16 7 0 0Z" />
+          <path d="M2 0H44" stroke-width=".8" />
+        </g>
+
+        <g transform="translate(292 130) rotate(-36) scale(.75)">
+          <path d="M0 0C16-9 36-11 54-4 36 4 16 7 0 0Z" />
+          <path d="M2 0H44" stroke-width=".8" />
+        </g>
+        <g transform="translate(286 136) rotate(6) scale(.8)">
+          <path d="M0 0C16-9 36-11 54-4 36 4 16 7 0 0Z" />
+          <path d="M2 0H44" stroke-width=".8" />
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <div class="faq__grid">
+    <div class="faq__intro">
+      <p class="faq__eyebrow">Antes de venir</p>
+      <h2 id="faq-titulo" class="faq__titulo">Preguntas frecuentes</h2>
+      <p class="faq__nota">
+        Si te queda alguna duda, escribinos y te respondemos sin compromiso.
+      </p>
+      <a
+        href={whatsappLink('Hola, tengo una consulta sobre los servicios.')}
+        class="faq__cta"
+        target="_blank"
+        rel="noopener"
+      >
+        Escribir por WhatsApp
+        <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path
+            d="M2 7h10M8 3l4 4-4 4"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </a>
+    </div>
+
+    <div class="faq__lista">
+      {
+        items.map((item) => (
+          <details class="faq__item">
+            <summary class="faq__pregunta">
+              <span>{item.pregunta}</span>
+              <span class="faq__icono" aria-hidden="true" />
+            </summary>
+            <p class="faq__respuesta">{item.respuesta}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ============================================================
+     BASE MÓVIL
+     ============================================================ */
+
+  .faq {
+    position: relative;
+    padding-block: var(--spacing-seccion);
+    background-color: var(--color-crema-50);
+  }
+
+  /* Decoración de prueba: solo escritorio. En móvil la sección no tiene
+     espacio libre y el dibujo competiría con las preguntas. */
+  .faq__decoracion {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 0;
+    width: min(24rem, 38vw);
+    color: var(--color-tierra-500);
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  .faq__decoracion svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .faq__grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 2.5rem;
+    width: 100%;
+    max-width: 72rem;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+
+  .faq__eyebrow {
+    margin-bottom: 0.9rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--color-tierra-400);
+  }
+
+  .faq__titulo {
+    margin-bottom: 1rem;
+    font-size: clamp(2rem, 5vw, 2.5rem);
+    line-height: 1.1;
+    color: var(--color-tierra-900);
+  }
+
+  .faq__nota {
+    max-width: 26rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--color-tierra-700);
+  }
+
+  .faq__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding-bottom: 3px;
+    border-bottom: 1px solid color-mix(in oklch, var(--color-tierra-900) 25%, transparent);
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-tierra-600);
+    transition:
+      color 0.35s var(--ease-suave),
+      border-color 0.35s var(--ease-suave);
+  }
+
+  .faq__cta svg {
+    width: 0.8rem;
+    height: 0.8rem;
+    transition: translate 0.35s var(--ease-suave);
+  }
+
+  .faq__cta:focus-visible {
+    outline: 2px solid var(--color-tierra-700);
+    outline-offset: 4px;
+  }
+
+  /* Lista sin tarjetas: solo hairlines. La tarjeta por pregunta que había
+     antes sumaba marcos y sombras a un contenido que ya tiene su propio
+     orden —número, pregunta, respuesta—. */
+  .faq__lista {
+    border-top: 1px solid color-mix(in oklch, var(--color-tierra-900) 12%, transparent);
+  }
+
+  .faq__item {
+    border-bottom: 1px solid color-mix(in oklch, var(--color-tierra-900) 12%, transparent);
+  }
+
+  .faq__pregunta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 1.25rem 0;
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    line-height: 1.35;
+    color: var(--color-tierra-900);
+    list-style: none;
+    cursor: pointer;
+    transition: color 0.3s var(--ease-suave);
+  }
+
+  .faq__pregunta::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq__pregunta:focus-visible {
+    outline: 2px solid var(--color-tierra-700);
+    outline-offset: -2px;
+  }
+
+  /* Más que se convierte en menos: la barra vertical desaparece al abrir. */
+  .faq__icono {
+    position: relative;
+    flex: none;
+    width: 0.875rem;
+    height: 0.875rem;
+    color: var(--color-tierra-500);
+  }
+
+  .faq__icono::before,
+  .faq__icono::after {
+    content: '';
+    position: absolute;
+    background-color: currentColor;
+  }
+
+  .faq__icono::before {
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+  }
+
+  .faq__icono::after {
+    top: 0;
+    left: 50%;
+    width: 1px;
+    height: 100%;
+    transition:
+      rotate 0.4s var(--ease-suave),
+      opacity 0.4s var(--ease-suave);
+  }
+
+  .faq__item[open] .faq__icono::after {
+    rotate: 90deg;
+    opacity: 0;
+  }
+
+  .faq__respuesta {
+    max-width: 46rem;
+    margin: 0;
+    padding: 0 2.25rem 1.5rem 0;
+    font-size: 0.9375rem;
+    line-height: 1.75;
+    color: var(--color-tierra-700);
+  }
+
+  .faq__item[open] .faq__respuesta {
+    animation: faq-respuesta 0.45s var(--ease-suave) backwards;
+  }
+
+  @keyframes faq-respuesta {
+    from {
+      opacity: 0;
+      translate: 0 -0.35rem;
+    }
+  }
+
+  /* ============================================================
+     ESCRITORIO — presentación fija junto a la lista
+     ============================================================ */
+
+  @media (min-width: 1024px) {
+    .faq__decoracion {
+      display: block;
+    }
+
+    .faq__grid {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+      align-items: start;
+      gap: 5rem;
+    }
+
+    .faq__intro {
+      position: sticky;
+      top: 7rem;
+    }
+
+    .faq__titulo {
+      font-size: 2.5rem;
+    }
+
+    .faq__pregunta {
+      padding: 1.5rem 0;
+      font-size: 1.2rem;
+    }
+  }
+
+  @media (hover: hover) {
+    .faq__pregunta:hover {
+      color: var(--color-tierra-600);
+    }
+
+    .faq__cta:hover {
+      color: var(--color-tierra-900);
+      border-color: var(--color-tierra-900);
+    }
+
+    .faq__cta:hover svg {
+      translate: 3px 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq__pregunta,
+    .faq__cta,
+    .faq__cta svg,
+    .faq__icono::after {
+      transition: none;
+    }
+
+    .faq__item[open] .faq__respuesta {
+      animation: none;
+    }
+  }
+</style>

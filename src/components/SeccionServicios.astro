@@ -1,5 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import TambienDisponible from './TambienDisponible.astro';
+import { tinte } from '../data/tintes';
 
 /**
  * Servicios de la home — galería expandible.
@@ -38,55 +40,23 @@ import type { CollectionEntry } from 'astro:content';
 interface Props {
   /** Servicios a mostrar en la galería, en orden de prioridad. */
   servicios: CollectionEntry<'servicios'>[];
-  /** Servicios sin página propia — se listan al pie, sin enlace. */
+  /** Servicios sin página propia — se muestran en el carrusel al pie. */
   inactivos: CollectionEntry<'servicios'>[];
 }
 
 const { servicios, inactivos } = Astro.props;
-
-/**
- * Velo de cada franja. El tinte es el mismo para todas —es el gesto de marca—
- * y lo que cambia es la opacidad, que es lo que hace que la activa se lea más
- * clara que las otras.
- *
- * El orden sigue al de `servicios`: se pasa por índice y no por nombre para
- * que agregar un servicio en el JSON no deje la paleta descolgada.
- */
-const TINTES = ['#8a6b52', '#6f7a63', '#a8788a'];
-
-/** Paleta por defecto cuando la lista crece más allá de la tabla. */
-const TINTE_BASE = '#7a6552';
-
-function tinte(i: number): string {
-  return TINTES[i % TINTES.length] ?? TINTE_BASE;
-}
 ---
 
 <section id="servicios" class="servicios py-[var(--spacing-seccion)]">
   <div class="max-w-6xl mx-auto px-6">
-    <div class="servicios__cabecera">
-      <div class="max-w-2xl">
-        <p class="text-xs uppercase tracking-[0.3em] text-tierra-400 mb-5">
-          Tratamientos
-        </p>
-        <h2 class="font-serif text-3xl md:text-4xl text-tierra-900 mb-5">Servicios</h2>
-        <p class="text-tierra-700 leading-relaxed">
-          Terapias manuales y tratamientos estéticos, adaptados a lo que tu cuerpo necesita.
-        </p>
-      </div>
-
-      <a href="/servicios/" class="servicios__ver-todos">
-        Ver todos
-        <svg class="size-3.5" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-          <path
-            d="M2 7h10M8 3l4 4-4 4"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-      </a>
+    <div class="max-w-2xl mb-5 md:mb-6">
+      <p class="text-xs uppercase tracking-[0.3em] text-tierra-400 mb-5">
+        Tratamientos
+      </p>
+      <h2 class="font-serif text-3xl md:text-4xl text-tierra-900 mb-5">Servicios</h2>
+      <p class="text-tierra-700 leading-relaxed">
+        Terapias manuales y tratamientos estéticos, adaptados a lo que tu cuerpo necesita.
+      </p>
     </div>
 
     <!-- Galería. `--total-franjas` es el único número que manda en el ancho:
@@ -139,24 +109,10 @@ function tinte(i: number): string {
       }
     </div>
 
-    <!-- Servicios sin página propia. Es una nota al pie y no una franja más:
-         la galería solo tiene sentido para lo que se puede abrir. Se
-         reorganiza cuando se decida qué pasa con estos. -->
-    {
-      inactivos.length > 0 && (
-        <div class="servicios__otros">
-          <p class="servicios__otros-titulo">También disponible</p>
-          <ul class="servicios__otros-lista">
-            {inactivos.map((servicio) => (
-              <li class="servicios__otros-item">{servicio.data.nombre}</li>
-            ))}
-          </ul>
-          <p class="servicios__otros-nota">
-            Consultá por estos y otros tratamientos por WhatsApp.
-          </p>
-        </div>
-      )
-    }
+    <!-- Servicios sin página propia. Ya no es una nota al pie: pasan a ser
+         tarjetas en un carrusel porque son la oferta secundaria y merecen
+         algo más que un listado. Se reorganiza cuando alguno tenga ficha. -->
+    <TambienDisponible servicios={inactivos} enlaceTodos="/servicios/" />
   </div>
 </section>
 
@@ -174,33 +130,6 @@ function tinte(i: number): string {
      `auto` la franja activa no tenía de dónde crecer — se quedaba en su alto
      base y el texto se cortaba. Con un alto explícito, la franja activa manda
      y el contenedor se estira con ella. */
-  .servicios__cabecera {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    margin-bottom: 3rem;
-  }
-
-  .servicios__ver-todos {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    align-self: flex-start;
-    padding-bottom: 3px;
-    border-bottom: 1px solid color-mix(in oklch, var(--color-tierra-900) 25%, transparent);
-    font-size: 0.8125rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--color-tierra-600);
-    transition:
-      color 0.35s var(--ease-suave),
-      border-color 0.35s var(--ease-suave);
-  }
-
-  .servicios__ver-todos svg {
-    transition: translate 0.35s var(--ease-suave);
-  }
-
   .galeria {
     display: flex;
     flex-direction: column;
@@ -358,18 +287,6 @@ function tinte(i: number): string {
      ============================================================ */
 
   @media (min-width: 768px) {
-    .servicios__cabecera {
-      flex-direction: row;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 3rem;
-      margin-bottom: 3.5rem;
-    }
-
-    .servicios__ver-todos {
-      margin-bottom: 0.5rem;
-    }
-
     .galeria {
       flex-direction: row;
       height: 34rem;
@@ -470,61 +387,14 @@ function tinte(i: number): string {
       display: inline-flex;
     }
 
-    .servicios__ver-todos:hover {
-      color: var(--color-tierra-900);
-      border-color: var(--color-tierra-900);
-    }
-
-    .servicios__ver-todos:hover svg,
     .servicio:hover .servicio__cta svg {
       translate: 3px 0;
     }
   }
 
   /* ============================================================
-     SERVICIOS SIN PÁGINA PROPIA
+     MOVIMIENTO REDUCIDO
      ============================================================ */
-
-  .servicios__otros {
-    margin-top: 3.5rem;
-    padding-top: 2.5rem;
-    border-top: 1px solid color-mix(in oklch, var(--color-tierra-900) 12%, transparent);
-  }
-
-  .servicios__otros-titulo {
-    font-size: 0.7rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--color-tierra-400);
-    margin-bottom: 1.5rem;
-  }
-
-  .servicios__otros-lista {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem 2rem;
-    list-style: none;
-    padding: 0;
-  }
-
-  .servicios__otros-item {
-    font-family: var(--font-serif);
-    font-size: 1.25rem;
-    color: var(--color-tierra-600);
-  }
-
-  .servicios__otros-nota {
-    margin-top: 1.5rem;
-    color: var(--color-tierra-700);
-    line-height: 1.75;
-  }
-
-  @media (min-width: 768px) {
-    .servicios__otros {
-      margin-top: 5rem;
-      padding-top: 3rem;
-    }
-  }
 
   @media (prefers-reduced-motion: reduce) {
     .servicio,
