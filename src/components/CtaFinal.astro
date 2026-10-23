@@ -1,40 +1,58 @@
 ---
-import { SITE, whatsappLink } from '../data/site';
+import { MAPS, SITE, whatsappLink } from '../data/site';
 
 /**
  * Cierre de la home.
  *
- * Banda oscura a sangre: es el único bloque de la página que no comparte el
- * margen del contenedor, así el final se lee como un corte y no como una
- * tarjeta más. Además de la invitación, concentra los datos de contacto que
- * antes no aparecían en la home —dirección exacta, teléfono e Instagram—,
- * que es lo que necesita una persona que ya decidió venir.
+ * Composición centrada y teatral, distinta de las secciones que vienen arriba:
+ * acá la página deja de informar y hace una sola invitación. El texto grande
+ * es el protagonista y no compite con una columna de datos de contacto.
+ *
+ * La dirección NO se imprime acá. El dato ya está en la intro, en el pie y en
+ * la página de contacto; repetirlo una cuarta vez solo suma ruido. Quien
+ * necesita llegar tiene el enlace "Cómo llegar", que abre Maps con el pin
+ * exacto.
+ *
+ * La marca de agua y la entrada por scroll son CSS puro: `animation-timeline:
+ * view()` anima contra la posición de la sección en la ventana. Donde el
+ * navegador no lo soporta —o si el sistema pide menos movimiento— todo se ve
+ * completo desde el principio, sin depender de JavaScript.
  */
 ---
 
-<section class="cierre" aria-labelledby="cierre-titulo">
-  <div class="cierre__grid">
-    <div class="cierre__texto">
-      <p class="cierre__eyebrow">
-        {SITE.direccion.comuna}, Santiago
-      </p>
-      <h2 id="cierre-titulo" class="cierre__titulo">
-        Regalate<br />un momento
-      </h2>
-      <p class="cierre__nota">
-        Escríbenos y coordinamos el día y la hora que mejor te acomode.
-      </p>
-    </div>
+<section class="cierre seccion" aria-labelledby="cierre-titulo">
+  {/* Marca de agua: la palabra del mensaje, en el serif de los títulos y a una
+      opacidad que solo se percibe como textura. Nunca compite con el texto. */}
+  <span class="cierre__marca" aria-hidden="true">calma</span>
 
-    <div class="cierre__contacto">
-      <a
-        class="cierre__boton"
-        href={whatsappLink('Hola, me gustaría agendar una hora.')}
-        target="_blank"
-        rel="noopener"
-      >
-        Agendar por WhatsApp
-        <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+  <div class="cierre__contenido">
+    <p class="cierre__eyebrow">
+      <span class="cierre__linea" aria-hidden="true"></span>
+      <span>Tu próxima pausa</span>
+      <span class="cierre__linea" aria-hidden="true"></span>
+    </p>
+
+    <h2 id="cierre-titulo" class="cierre__titulo">
+      <span class="cierre__titulo-linea">Tu cuerpo también</span>
+      <span class="cierre__titulo-linea">
+        pide <span class="cierre__acento">hora</span>.
+      </span>
+    </h2>
+
+    <p class="cierre__nota">
+      Escríbenos y coordinamos día, hora y tratamiento. Sin formularios: una
+      conversación y tu sesión agendada.
+    </p>
+
+    <a
+      class="cierre__boton"
+      href={whatsappLink('Hola, me gustaría agendar una hora.')}
+      target="_blank"
+      rel="noopener"
+    >
+      <span>Agendar por WhatsApp</span>
+      <span class="cierre__boton-flecha" aria-hidden="true">
+        <svg viewBox="0 0 14 14" fill="none" focusable="false">
           <path
             d="M2 7h10M8 3l4 4-4 4"
             stroke="currentColor"
@@ -43,35 +61,17 @@ import { SITE, whatsappLink } from '../data/site';
             stroke-linejoin="round"
           />
         </svg>
-      </a>
+      </span>
+    </a>
 
-      <address class="cierre__datos">
-        <a class="cierre__telefono" href={`tel:${SITE.telefonoLink}`}>
-          {SITE.telefono}
-        </a>
-        <p class="cierre__direccion">
-          {SITE.direccion.calle}<br />
-          {SITE.direccion.comuna}, Santiago
-        </p>
-        <a
-          class="cierre__instagram"
-          href={SITE.instagram}
-          target="_blank"
-          rel="noopener"
-        >
-          Instagram
-          <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
-            <path
-              d="M2 7h10M8 3l4 4-4 4"
-              stroke="currentColor"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </a>
-      </address>
-    </div>
+    <ul class="cierre__enlaces">
+      <li>
+        <a href={SITE.instagram} target="_blank" rel="noopener">Instagram</a>
+      </li>
+      <li>
+        <a href={MAPS.comoLlegar} target="_blank" rel="noopener">Cómo llegar</a>
+      </li>
+    </ul>
   </div>
 </section>
 
@@ -80,149 +80,202 @@ import { SITE, whatsappLink } from '../data/site';
      BASE MÓVIL
      ============================================================ */
 
+  /* `overflow: clip` y no `hidden`: ocultar establece un contenedor de scroll
+     propio y las animaciones `view()` de los hijos pasan a medirse contra esta
+     caja —que no scrollea— en vez de contra la ventana. `clip` recorta la marca
+     de agua sin crear ese contenedor. */
   .cierre {
-    padding-block: 4.5rem;
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
     background-color: var(--color-tierra-900);
     color: var(--color-crema-100);
   }
 
-  .cierre__grid {
-    display: grid;
-    gap: 2.5rem;
-    width: 100%;
-    max-width: 72rem;
-    margin-inline: auto;
-    padding-inline: 1.5rem;
+  /* Marca de agua. Va detrás de todo (`z-index` negativo dentro de un
+     contexto aislado), centrada y sin capturar el puntero. */
+  .cierre__marca {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: -1;
+    translate: -50% -50%;
+    font-family: var(--font-serif);
+    font-size: clamp(9rem, 34vw, 28rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+    color: color-mix(in oklch, var(--color-crema-50) 3.5%, transparent);
+    pointer-events: none;
+    user-select: none;
   }
 
+  .cierre__contenido {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 56rem;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+    text-align: center;
+  }
+
+  /* Eyebrow entre dos líneas finas, el mismo gesto del divisor de la intro. */
   .cierre__eyebrow {
-    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
     font-size: 0.7rem;
     letter-spacing: 0.3em;
     text-transform: uppercase;
     color: color-mix(in oklch, var(--color-crema-50) 55%, transparent);
   }
 
+  .cierre__linea {
+    width: 2rem;
+    height: 1px;
+    background-color: currentColor;
+    opacity: 0.5;
+  }
+
+  .cierre__linea:first-child {
+    transform-origin: right;
+  }
+
+  .cierre__linea:last-child {
+    transform-origin: left;
+  }
+
   .cierre__titulo {
-    font-size: clamp(2.75rem, 10vw, 4.5rem);
-    line-height: 0.98;
+    margin-bottom: 1.5rem;
+    font-size: clamp(2.5rem, 10vw, 5.5rem);
+    line-height: 1;
     letter-spacing: -0.015em;
     color: var(--color-crema-50);
     text-wrap: balance;
   }
 
+  .cierre__titulo-linea {
+    display: block;
+  }
+
+  /* La palabra "hora" se subraya sola: el trazo crece de izquierda a derecha
+     con el mismo `background-size` animado, sin un SVG aparte. */
+  .cierre__acento {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0% 1px;
+    padding-bottom: 0.06em;
+  }
+
   .cierre__nota {
-    max-width: 26rem;
-    margin-top: 1.5rem;
+    max-width: 30rem;
+    margin-bottom: 2.5rem;
     font-size: 0.9375rem;
-    line-height: 1.7;
+    line-height: 1.75;
     color: color-mix(in oklch, var(--color-crema-50) 65%, transparent);
+    text-wrap: pretty;
   }
 
-  .cierre__contacto {
-    display: flex;
-    flex-direction: column;
-    gap: 1.75rem;
-    padding-top: 2rem;
-    border-top: 1px solid color-mix(in oklch, var(--color-crema-50) 15%, transparent);
-  }
-
+  /* Botón: el texto va en el sans con versalitas espaciadas —el registro de
+     los enlaces del sitio— y la flecha vive en un círculo oscuro que hace de
+     contrapeso. La píldora es de crema, como el CTA del hero. */
   .cierre__boton {
     display: inline-flex;
     align-items: center;
-    align-self: flex-start;
-    gap: 0.6rem;
-    padding: 1rem 1.75rem;
+    gap: 1.25rem;
+    padding: 0.5rem 0.5rem 0.5rem 1.6rem;
     border-radius: 999px;
     background-color: var(--color-crema-50);
-    font-size: 0.75rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
     color: var(--color-tierra-900);
-    transition:
-      background-color 0.35s var(--ease-suave),
-      translate 0.35s var(--ease-suave);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    transition: background-color 0.4s var(--ease-suave);
   }
 
-  .cierre__boton svg {
+  .cierre__boton-flecha {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 999px;
+    background-color: var(--color-tierra-900);
+    color: var(--color-crema-50);
+  }
+
+  .cierre__boton-flecha svg {
     width: 0.9rem;
     height: 0.9rem;
-    transition: translate 0.35s var(--ease-suave);
+    transition: translate 0.4s var(--ease-suave);
+  }
+
+  .cierre__enlaces {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+    padding: 0;
+    list-style: none;
+    font-size: 0.7rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: color-mix(in oklch, var(--color-crema-50) 55%, transparent);
+  }
+
+  /* Separador vertical fino entre los dos enlaces. */
+  .cierre__enlaces li + li {
+    padding-left: 1.5rem;
+    border-left: 1px solid color-mix(in oklch, var(--color-crema-50) 18%, transparent);
+  }
+
+  .cierre__enlaces a {
+    position: relative;
+    padding-bottom: 3px;
+    transition: color 0.3s var(--ease-suave);
+  }
+
+  /* Subrayado que crece desde la izquierda: el mismo gesto que usa el logo del
+     header y los enlaces de las otras secciones. */
+  .cierre__enlaces a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s var(--ease-suave);
   }
 
   .cierre__boton:focus-visible,
-  .cierre__telefono:focus-visible,
-  .cierre__instagram:focus-visible {
+  .cierre__enlaces a:focus-visible {
     outline: 2px solid var(--color-crema-50);
     outline-offset: 4px;
   }
 
-  .cierre__datos {
-    display: grid;
-    justify-items: start;
-    gap: 0.75rem;
-    font-style: normal;
-  }
-
-  .cierre__telefono {
-    font-family: var(--font-serif);
-    font-size: 1.5rem;
-    line-height: 1.2;
-    color: var(--color-crema-50);
-    transition: color 0.3s var(--ease-suave);
-  }
-
-  .cierre__direccion {
-    font-size: 0.875rem;
-    line-height: 1.7;
-    color: color-mix(in oklch, var(--color-crema-50) 60%, transparent);
-  }
-
-  .cierre__instagram {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding-bottom: 3px;
-    border-bottom: 1px solid color-mix(in oklch, var(--color-crema-50) 30%, transparent);
-    font-size: 0.7rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: color-mix(in oklch, var(--color-crema-50) 60%, transparent);
-    transition:
-      color 0.3s var(--ease-suave),
-      border-color 0.3s var(--ease-suave);
-  }
-
-  .cierre__instagram svg {
-    width: 0.75rem;
-    height: 0.75rem;
-    transition: translate 0.35s var(--ease-suave);
-  }
-
   /* ============================================================
-     ESCRITORIO — invitación a la izquierda, contacto al pie de la derecha
+     TABLET / ESCRITORIO
      ============================================================ */
 
-  @media (min-width: 1024px) {
-    .cierre {
-      padding-block: 7rem;
-    }
-
-    .cierre__grid {
-      grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
-      align-items: end;
-      gap: 5rem;
-    }
-
-    .cierre__contacto {
-      padding-top: 0;
-      padding-left: 3rem;
-      border-top: 0;
-      border-left: 1px solid color-mix(in oklch, var(--color-crema-50) 15%, transparent);
+  @media (min-width: 768px) {
+    .cierre__eyebrow {
+      margin-bottom: 2.25rem;
     }
 
     .cierre__nota {
-      margin-top: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .cierre__enlaces {
+      margin-top: 3rem;
     }
   }
 
@@ -231,31 +284,131 @@ import { SITE, whatsappLink } from '../data/site';
       background-color: var(--color-crema-200);
     }
 
-    .cierre__boton:hover svg {
+    .cierre__boton:hover .cierre__boton-flecha svg {
       translate: 3px 0;
     }
 
-    .cierre__telefono:hover {
-      color: var(--color-crema-200);
-    }
-
-    .cierre__instagram:hover {
+    .cierre__enlaces a:hover {
       color: var(--color-crema-50);
-      border-color: var(--color-crema-50);
     }
 
-    .cierre__instagram:hover svg {
-      translate: 3px 0;
+    .cierre__enlaces a:hover::after {
+      transform: scaleX(1);
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .cierre__boton,
-    .cierre__boton svg,
-    .cierre__telefono,
-    .cierre__instagram,
-    .cierre__instagram svg {
-      transition: none;
+  /* ============================================================
+     ENTRADA AL SCROLL
+     Cada bloque entra con un rango propio: primero el eyebrow, después el
+     título, la nota y por último las acciones. Es un degradado de tiempo
+     leído como posición, no un delay: en una animación ligada al scroll no
+     existe el reloj.
+     ============================================================ */
+
+  /* Las animaciones se declaran con longhands y no con el shorthand
+     `animation`: el minificador del build fusiona `animation-timeline` dentro
+     del shorthand y emite `animation: ... view()`, una regla que el navegador
+     descarta entera (la timeline no forma parte del shorthand). El resultado
+     era que nada animaba en producción. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .cierre__eyebrow,
+      .cierre__titulo-linea,
+      .cierre__nota,
+      .cierre__boton,
+      .cierre__enlaces {
+        animation-name: cierre-entra;
+        animation-duration: auto;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view();
+      }
+
+      .cierre__eyebrow {
+        animation-range: entry 0% entry 28%;
+      }
+
+      .cierre__titulo-linea:first-child {
+        animation-range: entry 6% entry 38%;
+      }
+
+      .cierre__titulo-linea:last-child {
+        animation-range: entry 11% entry 44%;
+      }
+
+      .cierre__nota {
+        animation-range: entry 18% entry 54%;
+      }
+
+      .cierre__boton {
+        animation-range: entry 24% entry 64%;
+      }
+
+      .cierre__enlaces {
+        animation-range: entry 30% entry 72%;
+      }
+
+      /* Las dos líneas del eyebrow se dibujan hacia afuera. */
+      .cierre__linea {
+        animation-name: cierre-linea;
+        animation-duration: auto;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 26%;
+      }
+
+      .cierre__acento {
+        animation-name: cierre-subraya;
+        animation-duration: auto;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range: entry 20% entry 48%;
+      }
+
+      /* La marca de agua se desplaza más lento que el contenido: es lo que da
+         la sensación de profundidad. */
+      .cierre__marca {
+        animation-name: cierre-deriva;
+        animation-duration: auto;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range: entry 0% exit 100%;
+      }
+    }
+  }
+
+  @keyframes cierre-entra {
+    from {
+      opacity: 0;
+      translate: 0 1.25rem;
+    }
+  }
+
+  @keyframes cierre-linea {
+    from {
+      scale: 0 1;
+      opacity: 0;
+    }
+  }
+
+  @keyframes cierre-subraya {
+    from {
+      background-size: 0% 1px;
+    }
+    to {
+      background-size: 100% 1px;
+    }
+  }
+
+  @keyframes cierre-deriva {
+    from {
+      translate: -52% -46%;
+    }
+    to {
+      translate: -48% -54%;
     }
   }
 </style>

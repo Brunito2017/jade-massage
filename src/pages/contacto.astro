@@ -1,7 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
 import SEO from '../components/SEO.astro';
-import { SITE, whatsappLink } from '../data/site';
+import MapaUbicacion from '../components/MapaUbicacion.astro';
+import { MAPS, SITE, whatsappLink } from '../data/site';
 
 const titulo = `Contacto | ${SITE.nombre}`;
 const descripcion =
@@ -43,13 +44,34 @@ const descripcion =
         <p class="text-xs uppercase tracking-widest text-tierra-400 mb-5">
           Ubicación
         </p>
-        <p class="font-serif text-3xl text-tierra-900 mb-4">{SITE.comuna}</p>
-        <p class="text-tierra-700 leading-relaxed mb-8">
-          {SITE.region}, Chile
+        <address class="not-italic">
+          <p class="font-serif text-2xl md:text-3xl text-tierra-900 leading-snug mb-4 text-balance">
+            {SITE.direccion.calle}
+          </p>
+          <p class="text-tierra-700 leading-relaxed mb-3">
+            {SITE.direccion.comuna}, {SITE.direccion.region}
+          </p>
+        </address>
+        <p class="text-sm text-tierra-500 leading-relaxed mb-8">
+          Atención solo con hora agendada.
         </p>
-        <p class="text-sm text-tierra-500 leading-relaxed">
-          La dirección exacta se entrega al confirmar tu hora.
-        </p>
+        <a
+          href={MAPS.comoLlegar}
+          target="_blank"
+          rel="noopener"
+          class="inline-flex items-center gap-1.5 text-sm text-tierra-600 underline underline-offset-4 hover:text-tierra-900 transition-colors"
+        >
+          Cómo llegar
+          <svg viewBox="0 0 14 14" fill="none" aria-hidden="true" class="size-3">
+            <path
+              d="M2 7h10M8 3l4 4-4 4"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </a>
       </div>
 
       <div class="bg-crema-100 p-10 rounded-sm border border-tierra-900/8">
@@ -80,6 +102,8 @@ const descripcion =
       </div>
     </div>
   </section>
+
+  <MapaUbicacion />
 
   <section class="max-w-6xl mx-auto px-6 pb-24">
     <div class="bg-crema-100 p-10 md:p-14 rounded-sm border border-tierra-900/8 max-w-2xl">

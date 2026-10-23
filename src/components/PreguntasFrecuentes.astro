@@ -1,6 +1,4 @@
 ---
-import { whatsappLink } from '../data/site';
-
 /**
  * Preguntas frecuentes de la home.
  *
@@ -24,7 +22,7 @@ interface Props {
 const { items } = Astro.props;
 ---
 
-<section class="faq" aria-labelledby="faq-titulo">
+<section class="faq seccion" aria-labelledby="faq-titulo">
   {/* PRUEBA: bambú decorativo en la esquina inferior izquierda. Es puramente
       ornamental — `aria-hidden`, sin foco y sin capturar el puntero. Vive en la
       franja que queda libre debajo de la columna de presentación, así no cruza
@@ -146,23 +144,6 @@ const { items } = Astro.props;
       <p class="faq__nota">
         Si te queda alguna duda, escribinos y te respondemos sin compromiso.
       </p>
-      <a
-        href={whatsappLink('Hola, tengo una consulta sobre los servicios.')}
-        class="faq__cta"
-        target="_blank"
-        rel="noopener"
-      >
-        Escribir por WhatsApp
-        <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
-          <path
-            d="M2 7h10M8 3l4 4-4 4"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-      </a>
     </div>
 
     <div class="faq__lista">
@@ -188,7 +169,6 @@ const { items } = Astro.props;
 
   .faq {
     position: relative;
-    padding-block: var(--spacing-seccion);
     background-color: var(--color-crema-50);
   }
 
@@ -216,7 +196,7 @@ const { items } = Astro.props;
     position: relative;
     z-index: 1;
     display: grid;
-    gap: 2.5rem;
+    gap: 0.5rem;
     width: 100%;
     max-width: 72rem;
     margin-inline: auto;

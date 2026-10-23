@@ -37,6 +37,26 @@ export const SITE = {
   },
 } as const;
 
+/**
+ * Enlaces a Google Maps, construidos desde `SITE.geo` y no desde la dirección
+ * textual: el geocoder de Maps ubica "Walker Martínez 3577" sobre el eje de la
+ * avenida, no en el pin del local.
+ *
+ * `embed` es la versión sin API key que acepta un iframe. No se usa directo:
+ * `MapaUbicacion` la inyecta recién al hacer clic, para no cargar el JS de
+ * Google en la carga inicial.
+ */
+const geoQuery = `${SITE.geo.latitud},${SITE.geo.longitud}`;
+
+export const MAPS = {
+  /** Ficha del lugar: la URL que también puede ir en `hasMap` del JSON-LD. */
+  ficha: `https://www.google.com/maps/search/?api=1&query=${geoQuery}`,
+  /** Ruta desde la ubicación actual del usuario hasta el local. */
+  comoLlegar: `https://www.google.com/maps/dir/?api=1&destination=${geoQuery}`,
+  embed: `https://maps.google.com/maps?q=${geoQuery}&z=17&output=embed`,
+  embedTitulo: `Mapa con la ubicación de ${SITE.nombre}`,
+} as const;
+
 export const CATEGORIAS = {
   masoterapia: 'Masoterapia',
   estetica: 'Estética',

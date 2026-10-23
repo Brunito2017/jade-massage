@@ -2,7 +2,8 @@
 import { Font } from 'astro:assets';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
-import { SITE, whatsappLink } from '../data/site';
+import Pie from '../components/Pie.astro';
+import { SITE } from '../data/site';
 
 interface Props {
   /** Header transparente sobre el hero, sólido al scrollear. */
@@ -37,49 +38,6 @@ const { heroTransparente = false } = Astro.props;
       <slot />
     </main>
 
-    <footer class="bg-tierra-950 text-crema-100 mt-24">
-      <div class="max-w-6xl mx-auto px-6 py-16 grid gap-12 md:grid-cols-3">
-        <div>
-          <p class="font-serif text-2xl text-crema-50 mb-4">Jade Belleza y Spa</p>
-          <p class="text-sm text-crema-200/70 leading-relaxed">
-            Masoterapia clínica y estética integral en {SITE.comuna}, Santiago.
-          </p>
-        </div>
-
-        <div>
-          <p class="text-sm uppercase tracking-widest text-crema-200/50 mb-4">Servicios</p>
-          <ul class="space-y-2.5 text-sm text-crema-200/80">
-            <li><a href="/servicios/masaje-descontracturante/" class="hover:text-crema-50 transition-colors">Masaje descontracturante</a></li>
-            <li><a href="/servicios/drenaje-linfatico/" class="hover:text-crema-50 transition-colors">Drenaje linfático</a></li>
-            <li><a href="/servicios/limpieza-facial-profunda/" class="hover:text-crema-50 transition-colors">Limpieza facial profunda</a></li>
-            <li><a href="/servicios/" class="hover:text-crema-50 transition-colors">Ver todos</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <p class="text-sm uppercase tracking-widest text-crema-200/50 mb-4">Contacto</p>
-          <ul class="space-y-2.5 text-sm text-crema-200/80">
-            <li>
-              <a href={whatsappLink()} target="_blank" rel="noopener" class="hover:text-crema-50 transition-colors">
-                {SITE.telefono}
-              </a>
-            </li>
-            <li>
-              <a href={SITE.instagram} target="_blank" rel="noopener" class="hover:text-crema-50 transition-colors">
-                Instagram
-              </a>
-            </li>
-            <li class="text-crema-200/50">{SITE.comuna}, {SITE.region}</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="border-t border-crema-200/10">
-        <div class="max-w-6xl mx-auto px-6 py-6 flex flex-col sm:flex-row justify-between gap-3 text-xs text-crema-200/40">
-          <p>© {new Date().getFullYear()} {SITE.nombre}</p>
-          <a href="/aviso-legal/" class="hover:text-crema-200/70 transition-colors">Aviso legal</a>
-        </div>
-      </div>
-    </footer>
+    <Pie />
   </body>
 </html>

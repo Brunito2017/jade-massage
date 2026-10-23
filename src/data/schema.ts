@@ -1,4 +1,4 @@
-import { SITE } from '../data/site';
+import { MAPS, SITE } from '../data/site';
 
 /**
  * Negocio local. La dirección sale de `SITE.direccion`, que refleja el Google
@@ -30,6 +30,8 @@ export function negocioLocal() {
       latitude: SITE.geo.latitud,
       longitude: SITE.geo.longitud,
     },
+    /** Refuerza la asociación con la ficha de Google Maps del negocio. */
+    hasMap: MAPS.ficha,
     areaServed: {
       '@type': 'City',
       name: SITE.comuna,

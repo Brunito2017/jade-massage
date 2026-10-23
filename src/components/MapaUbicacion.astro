@@ -1,0 +1,210 @@
+---
+import { MAPS, SITE } from '../data/site';
+
+/**
+ * Mapa de ubicación con carga diferida (patrón "facade").
+ *
+ * El iframe de Google Maps pesa ~1 MB de JS de terceros y se lleva por delante
+ * el LCP en móvil, que es de donde llega la mayoría del tráfico. Por eso no se
+ * renderiza al cargar la página: se dibuja una fachada liviana —dirección en
+ * texto, que es lo que Google sí lee— y el iframe se inyecta recién cuando la
+ * persona pide ver el mapa.
+ *
+ * La dirección va en texto visible a propósito: el NAP del sitio tiene que
+ * coincidir con el Google Business Profile, y el embed no aporta esa señal.
+ */
+---
+
+<section class="mapa" aria-label={`Ubicación de ${SITE.nombre}`}>
+  <div
+    class="mapa__marco"
+    data-mapa
+    data-src={MAPS.embed}
+    data-titulo={MAPS.embedTitulo}
+  >
+    <button type="button" class="mapa__fachada">
+      <span class="mapa__pin" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" focusable="false">
+          <path
+            d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z"
+            stroke="currentColor"
+            stroke-width="1.2"
+            stroke-linejoin="round"
+          />
+          <circle cx="12" cy="10" r="2.6" stroke="currentColor" stroke-width="1.2" />
+        </svg>
+      </span>
+
+      <span class="mapa__eyebrow">Ubicación</span>
+      <span class="mapa__direccion">{SITE.direccion.calle}</span>
+      <span class="mapa__comuna">
+        {SITE.direccion.comuna}, {SITE.direccion.region}
+      </span>
+
+      <span class="mapa__accion">Ver mapa</span>
+    </button>
+  </div>
+</section>
+
+<script is:inline>
+  document.querySelectorAll('[data-mapa]').forEach((marco) => {
+    const boton = marco.querySelector('button');
+    if (!boton) return;
+
+    boton.addEventListener(
+      'click',
+      () => {
+        const iframe = document.createElement('iframe');
+        iframe.src = marco.dataset.src;
+        iframe.title = marco.dataset.titulo;
+        iframe.loading = 'lazy';
+        iframe.allowFullscreen = true;
+        iframe.referrerPolicy = 'no-referrer-when-downgrade';
+        marco.replaceChildren(iframe);
+      },
+      { once: true }
+    );
+  });
+</script>
+
+<style>
+  /* ============================================================
+     BASE MÓVIL
+     ============================================================ */
+
+  .mapa {
+    width: 100%;
+    max-width: 72rem;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+    padding-bottom: 6rem;
+  }
+
+  .mapa__marco {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border: 1px solid color-mix(in oklch, var(--color-tierra-900) 8%, transparent);
+    background-color: var(--color-crema-100);
+    /* Retícula tenue: sugiere un plano sin cargar ninguna imagen. */
+    background-image:
+      linear-gradient(
+        color-mix(in oklch, var(--color-tierra-900) 5%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        90deg,
+        color-mix(in oklch, var(--color-tierra-900) 5%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 2.5rem 2.5rem;
+  }
+
+  /* `:global` es obligatorio: el iframe lo crea el script y no lleva el
+     atributo de scope que Astro agrega a los elementos del template. Sin esto
+     el mapa se queda en su tamaño por defecto (300×150) dentro del marco. */
+  .mapa__marco :global(iframe) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  .mapa__fachada {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    height: 100%;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    color: var(--color-tierra-900);
+    cursor: pointer;
+    transition: background-color 0.35s var(--ease-suave);
+  }
+
+  .mapa__pin {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid color-mix(in oklch, var(--color-tierra-900) 20%, transparent);
+    border-radius: 999px;
+  }
+
+  .mapa__pin svg {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+
+  .mapa__eyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--color-tierra-400);
+  }
+
+  .mapa__direccion {
+    font-family: var(--font-serif);
+    font-size: clamp(1.5rem, 6vw, 2rem);
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+
+  .mapa__comuna {
+    font-size: 0.875rem;
+    color: var(--color-tierra-600);
+  }
+
+  .mapa__accion {
+    margin-top: 1.25rem;
+    padding: 0.8rem 1.6rem;
+    border: 1px solid color-mix(in oklch, var(--color-tierra-900) 25%, transparent);
+    border-radius: 999px;
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    transition:
+      background-color 0.35s var(--ease-suave),
+      color 0.35s var(--ease-suave);
+  }
+
+  .mapa__fachada:focus-visible {
+    outline: 2px solid var(--color-tierra-900);
+    outline-offset: -4px;
+  }
+
+  /* ============================================================
+     ESCRITORIO — el mapa es más ancho que alto
+     ============================================================ */
+
+  @media (min-width: 768px) {
+    .mapa__marco {
+      aspect-ratio: 16 / 9;
+      /* Un mapa de 1.150px de ancho a 16/9 es un bloque enorme de vacío cuando
+         todavía no se abrió: se acota el alto y el ancho sigue al contenedor. */
+      max-height: 30rem;
+    }
+  }
+
+  @media (hover: hover) {
+    .mapa__fachada:hover {
+      background-color: color-mix(in oklch, var(--color-tierra-900) 4%, transparent);
+    }
+
+    .mapa__fachada:hover .mapa__accion {
+      background-color: var(--color-tierra-900);
+      color: var(--color-crema-50);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mapa__fachada,
+    .mapa__accion {
+      transition: none;
+    }
+  }
+</style>

@@ -24,7 +24,7 @@ interface Props {
 const { motivos } = Astro.props;
 ---
 
-<section class="roxana" aria-labelledby="roxana-titulo">
+<section class="roxana seccion" aria-labelledby="roxana-titulo">
   <div class="roxana__grid">
     <div class="roxana__media" aria-hidden="true"></div>
 
@@ -77,7 +77,6 @@ const { motivos } = Astro.props;
 
   .roxana {
     background-color: var(--color-crema-100);
-    padding-block: var(--spacing-seccion);
   }
 
   .roxana__grid {
@@ -238,12 +237,18 @@ const { motivos } = Astro.props;
   }
 
   /* Entrada al hacer scroll. Es una mejora progresiva: donde el navegador no
-     soporta `animation-timeline`, el bloque se ve completo desde el principio. */
+     soporta `animation-timeline`, el bloque se ve completo desde el principio.
+     Longhands y no el shorthand `animation`: el minificador del build fusiona
+     `animation-timeline` dentro del shorthand y emite una regla que el
+     navegador descarta entera, así que en producción no animaba nada. */
   @supports (animation-timeline: view()) {
     @media (prefers-reduced-motion: no-preference) {
       .roxana__media,
       .roxana__texto {
-        animation: roxana-entra linear both;
+        animation-name: roxana-entra;
+        animation-duration: auto;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
         animation-timeline: view();
         animation-range: entry 10% cover 28%;
       }

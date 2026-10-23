@@ -24,9 +24,19 @@
   --color-crema-200: oklch(0.93 0.022 80);
   --color-crema-300: oklch(0.88 0.03 78);
 
-  /* Espaciado de secciones — ritmo amplio, aire */
-  --spacing-seccion: 6rem;
-  --spacing-seccion-movil: 4rem;
+  /* Ritmo vertical. Fluido con `clamp` en vez de un valor por breakpoint: el
+     aire crece de forma continua y el valor base ya es el de móvil, sin una
+     media query que lo corrija después.
+
+     Dos escalas y no una: un cambio de tema necesita aire; la continuación
+     del mismo artículo, no. Con una sola, la página de servicio quedaba con
+     cinco fronteras seguidas del mismo grosor y se leía como una pila de
+     bloques en vez de un texto.
+
+     Ojo con la suma: cada sección pone su padding arriba y abajo, así que el
+     hueco entre dos bloques es el doble de estos valores. */
+  --spacing-seccion: clamp(3rem, 2rem + 3vw, 5.5rem);
+  --spacing-seccion-compacta: clamp(2.5rem, 2rem + 1.5vw, 3.75rem);
 
   /* Alto de la onda que cierra el hero, en proporción a la pantalla: la
      franja crema ocupa ~30% de la primera pantalla. Lo comparten DivisorOnda
@@ -73,6 +83,27 @@
     font-family: var(--font-serif), Georgia, serif;
     font-weight: 400;
     letter-spacing: -0.01em;
+  }
+}
+
+/* ============================================================
+   RITMO DE SECCIONES — dueño único
+   ============================================================ */
+
+/* El padding vertical vive acá y no en cada componente. Antes estaba repetido
+   en diez lugares (siete `py-[var(--spacing-seccion)]` y tres `padding-block`
+   sueltos), y por eso `--spacing-seccion-movil` quedó sin usar: no había un
+   punto donde cambiar el ritmo una sola vez.
+
+   Base móvil: `.seccion` ya trae el valor pequeño. `.seccion--compacta` es
+   para bloques que continúan el anterior en vez de abrir un tema nuevo. */
+@layer components {
+  .seccion {
+    padding-block: var(--spacing-seccion);
+  }
+
+  .seccion--compacta {
+    padding-block: var(--spacing-seccion-compacta);
   }
 }
 
